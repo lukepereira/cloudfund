@@ -10,7 +10,7 @@ from ..deployments_manager.views import (
     get_resources_from_cluster,
 )
 
-def predict_cost_from_cluster(
+def predict_project_cost(
     access_token,
     repo_name,
     project_id,
@@ -21,19 +21,25 @@ def predict_cost_from_cluster(
     if 'cost' in project.keys():
         return project.get('cost')
         
-    cluster = get_project_configuration(
-        access_token,
-        repo_name,
-        project.get('sha'),
-        project_id,
-        'clusters',
-    )
-    resources = get_resources_from_cluster(cluster)
-    pricing_table = use_cases.get_pricing_table()
-    cost = use_cases.get_predicted_cost(resources, pricing_table)
-    print (cost)
+    cluster = {
+        'file_type': 'json', 
+        'content': get_project_configuration(
+            access_token,
+            repo_name,
+            project.get('sha'),
+            project_id,
+            'clusters',
+        )
+    }
+    cost = predict_cost_from_cluster_json(cluster)
     project['cost'] = cost
     updated_project = update_project(project)
-    print (updated_project)
+    return cost
+    
+    
+def predict_cost_from_cluster_json(cluster):
+    resources = get_resources_from_cluster(cluster['content'])
+    pricing_table = use_cases.get_pricing_table()
+    cost = use_cases.get_predicted_cost(resources, pricing_table)
     return cost
     

@@ -9,7 +9,7 @@ import {
 } from 'react-stripe-elements'
 import './Payments.css'
 
-class _CardForm extends React.Component<InjectedProps & {fontSize: string}> {
+class _CardForm extends React.Component<InjectedProps & {fontSize: string, project: object}> {
 
     constructor(props) {
         super(props)
@@ -21,9 +21,9 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string}> {
     handleAmountChange = (event) => this.setState({amount: event.target.value})
     
     createCharge = (stripeToken) => {
-        console.log('[token]', stripeToken)
-
-        //TODO: Move to api config 
+        if (!this.props.project) {
+            return
+        }
         const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/handle_charge'    
         const config = { 
             headers: {  
@@ -36,13 +36,14 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string}> {
             { 
                 stripeToken: stripeToken,
                 amount: this.state.amount,
+                project_id: this.props.project.project_id,
             },
             config,
         )
-        .then(function (response) {
+        .then((response) => {
             console.log(response);
         })
-        .catch(function (error) {
+        .catch((error) => {
             console.log(error);
         })
     }
@@ -145,15 +146,33 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
             }
         })
     }
+    
+    getPaymentStatus = () => (
+        this.props.project &&
+        <div>
+                <div>
+                    {`Monthly Cost: $${this.props.project.cost.monthly_cost} USD`}
+                </div>
+                <div>
+                    {`Hourly Cost: $${this.props.project.cost.hourly_cost} USD`}
+                </div>
+                <div>
+                    {`Wallet: $${this.props.project.wallet}`}
+                </div>
+        </div>
+    )
+    
 
     render() {
         const {elementFontSize} = this.state
-        
         return (
             <div className="Payments">
                 <h1>Payments</h1>
+                <div>
+                    {this.getPaymentStatus()}
+                </div>
                 <Elements>
-                    <CardForm fontSize={elementFontSize} />
+                    <CardForm project={this.props.project} fontSize={elementFontSize} />
                 </Elements>
             </div>
         )

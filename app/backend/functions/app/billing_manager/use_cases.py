@@ -1,4 +1,5 @@
 import os
+import pickle
 
 from bs4 import BeautifulSoup
 
@@ -41,11 +42,12 @@ def parse_price_sections(resources, pricing_table):
         resources['machineType'],
         pricing_table,
     )
-    zip_type_content = zip(
-        ['Virtual CPUs', 'Memory', 'Price (USD)', 'Preemptible price (USD)'],
+    zip_section_content = zip(
+        ['Memory', 'Price (USD)', 'Preemptible price (USD)'], #'Virtual CPUs',
         machine_type_section
     )
-    for section_type, section_content in zip_type_content:
+    for section_type, section_content in zip_section_content:
+        print ( section_type, section_content)
         if section_type == 'Price (USD)':
             price_ref['monthly-price'] = section_content[monthly_key]
             price_ref['hourly-price'] = section_content[hourly_key]
@@ -75,8 +77,24 @@ def get_pricing_section(section_header, pricing_table=None):
     return found_data
 
 
-def get_pricing_table():
-    #TODO: support loading object from pickle
+def get_pricing_table(src='pickle'):
+    cur_path = os.path.dirname(os.path.abspath(__file__))
+    file_name = 'pricing.pkl'
+    file_path = '{cur_path}/{file_name}'.format(
+        cur_path=cur_path,
+        file_name=file_name,
+    )
+    pkl_file = open(file_path, 'rb')
+    return pickle.load(pkl_file)
+
+    
+def create_pricing_pickle(pricing_table):
+    output = open('pricing.pkl', 'wb')
+    pickle.dump(pricing_table, output)
+    output.close()
+
+
+def get_pricing_table_from_html():
     pricing_table = []
     cur_path = os.path.dirname(os.path.abspath(__file__))
     file_name = 'pricing.html'
@@ -91,3 +109,4 @@ def get_pricing_table():
         pricing_section['body'] = section.attrs
         pricing_table.append(pricing_section)
     return pricing_table
+

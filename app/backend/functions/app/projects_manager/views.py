@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from . import use_cases
 
@@ -9,6 +10,7 @@ def create_project_entity(
     project_url,
     pull_request_url, 
     pull_request_sha,
+    cost,
 ):
     project_info = {
         'project_id': project_id,
@@ -19,9 +21,11 @@ def create_project_entity(
         'sha': pull_request_sha,
         'group_ids': { 'values': [] },
         'date_created': datetime.datetime.utcnow(),
+        'cost': cost,
+        'wallet': 0,
     }
     client = use_cases.get_client()
-    entity = use_cases.create_entity(client, project_id)
+    entity = use_cases.create_entity(client, project_id, 'Project')
     use_cases.update_entity(entity, project_info)
     client.put(entity)
     return project_id
@@ -55,4 +59,27 @@ def get_project_cost(project_id):
     if project and 'cost' in project.keys():
         return project.get('cost')
     return client
+    
+    
+def create_payment_entity(
+    project_id,
+    amount,
+    stripe_object,
+    status
+):
+    payment_id = uuid.uuid4().hex
+    payment_info = {
+        'payment_id': payment_id,
+        'project_id': project_id,
+        'group_ids': { 'values': [] },
+        'amount': amount,
+        'stripe_object': stripe_object,
+        'status': status, # pending_deposit, deposited
+        'date_created': datetime.datetime.utcnow(),
+    }
+    client = use_cases.get_client()
+    entity = use_cases.create_entity(client, payment_id, 'Payment')
+    use_cases.update_entity(entity, payment_info)
+    client.put(entity)
+    return payment_id
         

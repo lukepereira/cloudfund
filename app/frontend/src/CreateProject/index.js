@@ -10,6 +10,10 @@ class CreateProject extends React.Component {
             projectName: '',
             projectURL: '',
             deploymentFile: '',
+            cost: {
+                monthly_cost: 0,
+                hourly_cost: 0,
+            },
         }
     }    
 
@@ -19,8 +23,22 @@ class CreateProject extends React.Component {
 
     handleDeployment = (event) => this.setState({deploymentFile: event.target.value})
     
-    handleCluster = (event) => this.setState({clusterFile: event.target.value})
+    handleCluster = (event) => {
+        this.setState({clusterFile: event.target.value})
+        if (this.isValidJson(event.target.value)) {
+            this.getPredictedCost(event.target.value)
+        }
+    }
     
+    isValidJson = (json) => {
+        try {
+            JSON.parse(json);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+        
     handleSubmit = () => {
         
         if (
@@ -62,6 +80,50 @@ class CreateProject extends React.Component {
         })
     }
     
+    getPredictedCost = (cluster_json) => {
+        if (!cluster_json){
+            return 
+        }
+        
+        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_predicted_cost_from_json'    
+        const config = { 
+            headers: {  
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+        axios.post(
+            post_url,
+            {
+                cluster: {
+                    format: 'json', 
+                    content: cluster_json,
+                },
+            },
+            config
+        )
+        .then((response) => {
+            console.log(response)
+            this.setState({ cost: response.data })
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    }
+    
+    getPredictedCostSection = () => (
+        this.state.cost &&
+        <div>
+                <div>
+                    {`Monthly Cost: $${this.state.cost.monthly_cost} USD`}
+                </div>
+                <div>
+                    {`Hourly Cost: $${this.state.cost.hourly_cost} USD`}
+                </div>
+        </div>
+        
+    )
+    
     render() {
         return (
             <div className="CreateProject">
@@ -84,7 +146,7 @@ class CreateProject extends React.Component {
                         >
                         </input>
                     </label>
-                    
+                    {this.getPredictedCostSection()}
                     <label>
                         Cluster JSON
                         <textarea 

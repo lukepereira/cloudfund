@@ -10,7 +10,7 @@ class StripeWrapper extends Component {
         
         return (
             <StripeProvider apiKey={apiKeyConfig.dev}> 
-                <Payments/>
+                <Payments {...this.props}/>
             </StripeProvider> 
         )
     }    

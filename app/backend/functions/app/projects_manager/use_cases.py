@@ -8,8 +8,8 @@ def get_client():
     return datastore.Client()
 
     
-def create_entity(client, project_id):
-    key = client.key('Project', project_id)
+def create_entity(client, key_id, kind):
+    key = client.key(kind, key_id)
     entity = datastore.Entity(key=key)
     return entity
 
