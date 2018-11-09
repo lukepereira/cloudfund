@@ -1,0 +1,33 @@
+# GCP datastore
+indexes:
+
+- kind: Project
+  ancestor: no
+  properties:
+  - name: date_created
+    direction: desc
+  - name: cost
+  - name: group_ids
+  - name: wallet
+  - name: project_id
+  - name: project_name
+  - name: project_url
+  - name: pull_request_url
+  - name: sha
+  - name: status
+  
+
+- kind: Payment
+  ancestor: no
+  properties:
+  - name: date_created
+    direction: desc
+  - name: amount
+  - name: group_ids
+  - name: payment_id
+  - name: project_id
+  - name: stripe_object
+  - name: project_url
+  - name: status
+    direction: desc
+  

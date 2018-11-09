@@ -4,6 +4,8 @@ from os import path
 
 from . import config 
 
+from apiclient.discovery import build
+
 
 def find_values(id, json_repr):
     results = []
@@ -24,3 +26,18 @@ def get_resources_from_node_pool(node_pool):
         )
         for field in config.CLUSTER_RESOURCE_FIELDS
     }
+
+def create_cluster(
+    gcp_project,
+    zone,
+    cluster_json,
+    version='v1beta1',
+ ):
+    service = build('container', version)
+    cl = service.projects().zones().clusters()
+    return cl.create(
+        projectId=gcp_project,
+        zone=zone,
+        body=cluster_json
+    ).execute()
+    

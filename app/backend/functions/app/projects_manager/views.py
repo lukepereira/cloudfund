@@ -34,7 +34,7 @@ def create_project_entity(
 def get_all_projects():
     client = use_cases.get_client()
     query = client.query(kind='Project')
-    query.order = ['-date_created']
+    # query.order = ['-date_created']
     results = list(query.fetch())
     return results
     
@@ -44,7 +44,7 @@ def get_project(project_id):
     # query = client.query(kind='Project')
     # query.add_filter('project_id', '=', project_id)
     # result = query.fetch()
-    project = use_cases.get_project(client, project_id)
+    project = use_cases.get_entity(client, project_id, 'Project')
     return project
     
     
@@ -55,7 +55,7 @@ def update_project(project):
 
 def get_project_cost(project_id):
     client = use_cases.get_client()
-    project = use_cases.get_project(client, project_id)
+    project = use_cases.get_entity(client, project_id)
     if project and 'cost' in project.keys():
         return project.get('cost')
     return client
@@ -74,7 +74,7 @@ def create_payment_entity(
         'group_ids': { 'values': [] },
         'amount': amount,
         'stripe_object': stripe_object,
-        'status': status, # pending_deposit, deposited
+        'status': status, # pending_deposit, deposited, refunded
         'date_created': datetime.datetime.utcnow(),
     }
     client = use_cases.get_client()
@@ -82,4 +82,16 @@ def create_payment_entity(
     use_cases.update_entity(entity, payment_info)
     client.put(entity)
     return payment_id
-        
+    
+    
+def approve_pending_payments(project_id):
+    client = use_cases.get_client()
+    pending_payments = use_cases.get_project_payments(
+        client, 
+        project_id, 
+        'pending_deposit'
+    )
+    for payment in pending_payments:
+        payment['status'] = 'deposited'
+    client.put_multi(pending_payments)
+    return pending_payments

@@ -18,6 +18,7 @@ def create_charge(stripe_key, token, amount, project_id):
         currency='usd',
         description=use_cases.get_charge_description(token, project_id),
         source=token['id'],
+        #receipt_email=''
     )
     if 'amount' not in charge:
         return

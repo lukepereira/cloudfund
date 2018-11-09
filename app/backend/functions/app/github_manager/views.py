@@ -33,10 +33,10 @@ def create_project_pull_request(
         base='master',
         body=use_cases.get_message(project_id, 'body'),
     )
-    use_cases.set_pending_status(repo, pull_request, project_id)
+    use_cases.set_status(repo, pull_request.head.sha, project_id, 'pending')
     return { 
         'url': pull_request.url,
-        'sha': branch.ref,
+        'sha': pull_request.head.sha,
     }
     
     
@@ -56,4 +56,16 @@ def get_project_configuration(
         config_type,
     )
     return base64.b64decode(configuration_file.content)
+
+
+def approve_pending_pr(
+    access_token,
+    repo_name,
+    project_id,
+    sha,
+):
+    g = Github(access_token)
+    repo = g.get_repo(repo_name)
+    use_cases.set_status(repo, sha, project_id, 'success')
+    return sha
     

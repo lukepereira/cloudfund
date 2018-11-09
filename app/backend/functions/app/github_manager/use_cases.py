@@ -38,14 +38,13 @@ def get_project_url(project_id):
     )
 
 
-def set_pending_status(repo, pull_request, project_id):
-    sha = pull_request.head.sha
+def set_status(repo, sha, project_id, state):
     repo.get_commit(sha=sha).create_status(
-        state='pending',
+        state=state,
         target_url='{project_url}/payments'.format(
             project_url=get_project_url(project_id)
         ),
-        description='Deployment is pending payment',
+        description='Payment state is {state}'.format(state=state),
         context='payments',
     )
 
@@ -93,3 +92,5 @@ def get_file_type(config_type):
         return 'json'
     elif config_type == 'deployments':
         return 'yaml'
+    
+    
