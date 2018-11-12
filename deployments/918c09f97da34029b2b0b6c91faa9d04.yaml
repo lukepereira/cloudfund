@@ -1,20 +1,16 @@
-apiVersion: "extensions/v1beta1"
-kind: "Deployment"
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
-  name: "nginx-1"
-  namespace: "default"
-  labels:
-    app: "nginx-1"
+  name: nginx-deployment
 spec:
   replicas: 3
-  selector:
-    matchLabels:
-      app: "nginx-1"
   template:
     metadata:
       labels:
-        app: "nginx-1"
+        app: nginx
     spec:
       containers:
-      - name: "nginx"
-        image: "nginx:latest"
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
