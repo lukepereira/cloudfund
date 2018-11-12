@@ -25,6 +25,7 @@ from app.projects_manager.views import (
     create_project_entity,
     get_all_projects,
     get_project,
+    update_project_status,
 )
 
 app = create_app('development')
@@ -117,33 +118,32 @@ def handle_charge(request):
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_deployment_webhook(request):
     request_json = request.get_json()
-    # if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
-    cluster, deployment = get_project_configurations(
-        app.config['GH_ACCESS_TOKEN'],
-        app.config['GH_REPO_NAME'],
-        request_json['pull_request'],
-    )
-    
-    cluster_response = create_cluster_from_configuration(
-        app.config['GOOGLE_PROJECT_ID'],
-        cluster,
-    )
-    
-    deployment_response = create_deployment_from_configuration(
-        app.config['GOOGLE_PROJECT_ID'],
-        cluster,
-        deployment,
-    )
-    #TODO: add cluster_response to project, update status to merged
-    print (cluster_response)
-    print(deployment_response)
-    return jsonify({
-        'cluster': cluster_response,
-        'deployment': deployment_response, 
-    })
-    # return jsonify(request_json)
-    
-    
+    if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
+        cluster, deployment = get_project_configurations(
+            app.config['GH_ACCESS_TOKEN'],
+            app.config['GH_REPO_NAME'],
+            request_json['pull_request'],
+        )
+        cluster_response = create_cluster_from_configuration(
+            app.config['GOOGLE_PROJECT_ID'],
+            cluster,
+        )
+        deployment_response = create_deployment_from_configuration(
+            app.config['GOOGLE_PROJECT_ID'],
+            cluster,
+            deployment,
+        )
+        update_project_status(
+            request_json['pull_request']['head']['ref'], 
+            'merged',
+        )
+        return jsonify({
+            'cluster': cluster_response,
+            'deployment': deployment_response, 
+        })
+    return jsonify(request_json)
+
+
 @app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def test_deployment(request):

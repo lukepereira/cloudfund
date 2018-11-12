@@ -43,7 +43,7 @@ def get_project_configurations(
         pull_request['head']['ref'],
         'deployments',
     )
-    deployment_yaml = deployment #yaml.load(deployment.decode("utf-8"))
+    deployment_yaml = yaml.load(deployment.decode("ascii"))
     return cluster_json, deployment_yaml 
 
 
@@ -64,6 +64,7 @@ def create_cluster_from_configuration(
         )
     return cluster_response
 
+
 def create_deployment_from_configuration(
     gcp_project,
     cluster,
@@ -76,7 +77,6 @@ def create_deployment_from_configuration(
     )
     deployment_response = use_cases.create_deployment(
         api_instance,
-        cluster,
+        deployment,
     )
     return deployment_response
-    

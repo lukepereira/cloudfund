@@ -53,6 +53,12 @@ def update_project(project):
     client.put(project)
 
 
+def update_project_status(project_id, status):
+    project = get_project(project_id)
+    project['status'] = status
+    update_project(project)
+
+
 def get_project_cost(project_id):
     client = use_cases.get_client()
     project = use_cases.get_entity(client, project_id)

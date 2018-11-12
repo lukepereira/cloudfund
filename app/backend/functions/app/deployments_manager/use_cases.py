@@ -63,13 +63,6 @@ def create_cluster(
         zone=zone,
         body=cluster
     ).execute()
-    # request = service.projects().zones().clusters().setMasterAuth(
-    #     projectId=gcp_project,
-    #     zone=zone,
-    #     clusterId=cluster_id,
-    #     body=set_master_auth_request_body
-    # )
-    
     return response
     
     
@@ -92,21 +85,49 @@ def get_k8_api(
         endpoint=cluster.endpoint,
     )
     configuration.verify_ssl = False
-    # configuration.ssl_ca_cert = "/path/to/ca_chain.crt"
     configuration.api_key = {
         'authorization': 'Bearer {token}'.format(
             token=credentials.token,
         )
     }
+    # configuration.ssl_ca_cert = "/path/to/ca_chain.crt"
     client.Configuration.set_default(configuration)
-    print(credentials.token)
-    print (cluster.endpoint)
-    return client.ExtensionsV1beta1Api() # CoreV1Api
-        
-        
+    return client.ExtensionsV1beta1Api()
+    
+
+def sanitize_k8_object(k8_object):
+    api = client.ApiClient()
+    return api.sanitize_for_serialization(k8_object)
+
+
 def create_deployment(api_instance, deployment):
-    api_response = api_instance.create_namespaced_deployment(
-        body=deployment,
-        namespace='default',
-    )
+    try:
+        api_response = api_instance.create_namespaced_deployment(
+            body=deployment,
+            namespace='default',
+        )
+        return sanitize_k8_object(api_response)
+    except (client.rest.ApiException) as error:
+        api_response = update_deployment(
+            api_instance, 
+            deployment,
+        )
+        return sanitize_k8_object(api_response)
+
+
+def update_deployment(api_instance, deployment):
+    api_response = api_instance.patch_namespaced_deployment(
+        name=deployment['metadata']['name'],
+        namespace="default",
+        body=deployment)
     return api_response
+    
+    
+def delete_deployment(api_instance, deployment_name):
+    api_response = api_instance.delete_namespaced_deployment(
+        name=deployment_name,
+        namespace="default",
+        body=client.V1DeleteOptions(
+            propagation_policy='Foreground',
+            grace_period_seconds=5))
+    return sanitize_k8_object(api_response)
