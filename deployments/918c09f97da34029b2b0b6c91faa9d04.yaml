@@ -1,19 +1,37 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
 metadata:
-  name: nginx-deployment
+  name: "nginx-1"
+  namespace: "default"
+  labels:
+    app: "nginx-1"
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: "nginx-1"
   template:
     metadata:
       labels:
-        app: nginx
+        app: "nginx-1"
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.7.9
-        ports:
-        - containerPort: 80
+      - name: "nginx"
+        image: "nginx:latest"
+---
+apiVersion: "autoscaling/v1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "nginx-1-hpa"
+  namespace: "default"
+  labels:
+    app: "nginx-1"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "nginx-1"
+    apiVersion: "apps/v1beta1"
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
