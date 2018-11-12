@@ -42,9 +42,13 @@ def parse_price_sections(resources, pricing_table):
         resources['machineType'],
         pricing_table,
     )
+    machine_type_header = ['Memory', 'Price (USD)', 'Preemptible price (USD)']
+    if len(machine_type_section) > 3:
+        machine_type_header = ['Virtual CPUs', 'Memory', 'Price (USD)', 'Preemptible price (USD)']
+
     zip_section_content = zip(
-        ['Memory', 'Price (USD)', 'Preemptible price (USD)'], #'Virtual CPUs',
-        machine_type_section
+        machine_type_header,
+        machine_type_section,
     )
     for section_type, section_content in zip_section_content:
         print ( section_type, section_content)

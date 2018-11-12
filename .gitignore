@@ -2,3 +2,4 @@ notes
 app/backend/functions/config/secrets.yaml
 app/backend/functions/app/billing_manager/pricing.html
 app/frontend/node_modules
+**.pyc

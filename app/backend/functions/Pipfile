@@ -15,6 +15,8 @@ kubernetes = "*"
 "bs4" = "*"
 google-api-python-client = "*"
 "oauth2client" = "==3.*"
+google-auth = "*"
+google-cloud-container = "*"
 
 [dev-packages]
 "beautifulsoup4" = "*"

@@ -1,4 +1,5 @@
 import json
+import yaml
 
 from . import use_cases
 
@@ -17,30 +18,65 @@ def get_resources_from_cluster(cluster_json):
     return resource_data
 
 
-def create_cluster_from_configuration(
+def get_project_configurations(
     access_token,
     repo_name,
-    gcp_project,
     pull_request,
 ):
     project_id = pull_request['head']['ref']
     ref = 'refs/heads/{project_id}'.format(
         project_id=project_id,
     )
-    cluster = {
-        'file_type': 'json', 
-        'content': get_project_configuration(
-            access_token,
-            repo_name,
-            pull_request['head']['sha'],
-            pull_request['head']['ref'],
-            'clusters',
-        )
-    }
-    cluster_json = json.loads(cluster['content'])
-    cluster_status = use_cases.create_cluster(
-        gcp_project,
-        cluster_json['cluster']['location'],
-        cluster_json,
+    cluster = get_project_configuration(
+        access_token,
+        repo_name,
+        pull_request['head']['sha'],
+        pull_request['head']['ref'],
+        'clusters',
     )
-    return cluster_resp
+    cluster_json = json.loads(cluster)
+    
+    deployment = get_project_configuration(
+        access_token,
+        repo_name,
+        pull_request['head']['sha'],
+        pull_request['head']['ref'],
+        'deployments',
+    )
+    deployment_yaml = deployment #yaml.load(deployment.decode("utf-8"))
+    return cluster_json, deployment_yaml 
+
+
+def create_cluster_from_configuration(
+    gcp_project,
+    cluster,
+):
+    cluster_response = use_cases.get_cluster(
+        gcp_project,
+        cluster['cluster']['location'],
+        cluster,
+    )
+    if not cluster_response:
+        cluster_response = use_cases.create_cluster(
+            gcp_project,
+            cluster['cluster']['location'],
+            cluster,
+        )
+    return cluster_response
+
+def create_deployment_from_configuration(
+    gcp_project,
+    cluster,
+    deployment,
+):
+    api_instance = use_cases.get_k8_api(
+        gcp_project=gcp_project,
+        zone=cluster['cluster']['location'],
+        cluster_id=cluster['cluster']['name'],
+    )
+    deployment_response = use_cases.create_deployment(
+        api_instance,
+        cluster,
+    )
+    return deployment_response
+    

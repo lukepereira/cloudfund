@@ -12,6 +12,8 @@ from app.billing_manager.views import (
 )
 from app.deployments_manager.views import (
     create_cluster_from_configuration,
+    create_deployment_from_configuration,
+    get_project_configurations,
 )
 from app.github_manager.views import (
     create_project_pull_request,
@@ -63,7 +65,7 @@ def get_projects(request):
     return jsonify(results)
 
 
-@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def get_project_by_id(request):
     request_json = request.get_json()
@@ -71,7 +73,7 @@ def get_project_by_id(request):
     return jsonify(results)
 
 
-@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def get_predicted_cost_from_project(request):
     request_json = request.get_json()
@@ -83,7 +85,7 @@ def get_predicted_cost_from_project(request):
     return jsonify(result)
     
 
-@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def get_predicted_cost_from_json(request):
     request_json = request.get_json()
@@ -115,12 +117,39 @@ def handle_charge(request):
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_deployment_webhook(request):
     request_json = request.get_json()
-    if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
-        cluster = create_cluster_from_configuration(
-            app.config['GH_ACCESS_TOKEN'],
-            app.config['GH_REPO_NAME'],
-            app.config['GOOGLE_PROJECT_ID'],
-            request_json['pull_request'],
-        )
-        return jsonify(cluster)
-    return ('', 204)
+    # if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
+    cluster, deployment = get_project_configurations(
+        app.config['GH_ACCESS_TOKEN'],
+        app.config['GH_REPO_NAME'],
+        request_json['pull_request'],
+    )
+    
+    cluster_response = create_cluster_from_configuration(
+        app.config['GOOGLE_PROJECT_ID'],
+        cluster,
+    )
+    
+    deployment_response = create_deployment_from_configuration(
+        app.config['GOOGLE_PROJECT_ID'],
+        cluster,
+        deployment,
+    )
+    #TODO: add cluster_response to project, update status to merged
+    print (cluster_response)
+    print(deployment_response)
+    return jsonify({
+        'cluster': cluster_response,
+        'deployment': deployment_response, 
+    })
+    # return jsonify(request_json)
+    
+    
+@app.route('/', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
+def test_deployment(request):
+    request_json = request.get_json()
+    res = create_deployment_from_configuration(
+        app.config['GOOGLE_PROJECT_ID'],
+        None,
+    )  
+    return jsonify(res)
