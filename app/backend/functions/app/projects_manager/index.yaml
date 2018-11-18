@@ -6,9 +6,11 @@ indexes:
   properties:
   - name: date_created
     direction: desc
-  - name: cost
+  - name: predicted_cost
+  - name: cumulative_cost 
   - name: group_ids
   - name: wallet
+  - name: revenue
   - name: project_id
   - name: project_name
   - name: project_url

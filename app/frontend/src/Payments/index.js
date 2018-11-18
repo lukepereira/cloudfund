@@ -151,10 +151,10 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
         this.props.project &&
         <div>
                 <div>
-                    {`Monthly Cost: $${this.props.project.cost.monthly_cost} USD`}
+                    {`Monthly Cost: $${this.props.project.predicted_cost.monthly_cost} USD`}
                 </div>
                 <div>
-                    {`Hourly Cost: $${this.props.project.cost.hourly_cost} USD`}
+                    {`Hourly Cost: $${this.props.project.predicted_cost.hourly_cost} USD`}
                 </div>
                 <div>
                     {`Wallet: $${this.props.project.wallet}`}

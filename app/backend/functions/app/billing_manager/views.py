@@ -25,8 +25,8 @@ def predict_project_cost(
     project = get_project(project_id)
     if not project:
         return
-    if 'cost' in project.keys():
-        return project.get('cost')
+    if 'predicted_cost' in project.keys():
+        return project.get('predicted_cost')
         
     cluster = {
         'file_type': 'json', 
@@ -38,8 +38,8 @@ def predict_project_cost(
             'clusters',
         )
     }
-    cost = predict_cost_from_cluster_json(cluster)
-    project['cost'] = cost
+    predicted_cost = predict_cost_from_cluster_json(cluster)
+    project['predicted_cost'] = predicted_cost
     updated_project = update_project(project)
     return cost
     
@@ -57,7 +57,7 @@ def handle_monthly_payment(
     project_id,
 ):
     project = get_project(project_id)
-    if (project['wallet'] >= project['cost']['monthly_cost']):
+    if (project['wallet'] >= project['predicted_cost']['monthly_cost']):
         pr = approve_pending_pr(
             access_token,
             repo_name,
@@ -68,4 +68,23 @@ def handle_monthly_payment(
         project['status'] = 'pending_merge'
         updated_project = update_project(project)
         return project['status']
+        
+        
+def get_costs_from_bigquery(
+    big_query_table,
+):
+    QUERY = '''
+        SELECT
+        labels.key as key,
+        labels.value as value,
+        SUM(cost) as cost
+        FROM `{big_query_table}`
+        LEFT JOIN UNNEST(labels) as labels
+        WHERE key = 'project_id'
+        GROUP BY key, value;
+    '''.format( 
+        big_query_table=big_query_table,
+    )
+    rows = use_cases.query_bigquery(QUERY)
+    return rows
     

@@ -1,3 +1,4 @@
+from google.cloud import bigquery
 import os
 import pickle
 
@@ -114,3 +115,11 @@ def get_pricing_table_from_html():
         pricing_table.append(pricing_section)
     return pricing_table
 
+
+def query_bigquery(query):
+    client = bigquery.Client()
+    query_job = client.query(query)  
+    rows = query_job.result()
+    for row in rows:
+        print(row)
+    return rows

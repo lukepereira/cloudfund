@@ -17,6 +17,7 @@ google-api-python-client = "*"
 "oauth2client" = "==3.*"
 google-auth = "*"
 google-cloud-container = "*"
+google-cloud-bigquery = "*"
 
 [dev-packages]
 "beautifulsoup4" = "*"

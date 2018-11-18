@@ -1,4 +1,5 @@
 import base64
+import json
 
 from github import Github
 
@@ -21,10 +22,12 @@ def create_project_pull_request(
         deployment, 
         'deployments',
     )
+
+    valid_cluster = validate_cluster(project_id, cluster)
     cluster_file = use_cases.create_file(
         repo,
         project_id,
-        cluster,
+        valid_cluster,
         'clusters',
     )
     pull_request = repo.create_pull(
@@ -38,7 +41,19 @@ def create_project_pull_request(
         'url': pull_request.url,
         'sha': pull_request.head.sha,
     }
+
     
+def validate_cluster(project_id, cluster):
+    cluster_json = json.loads(cluster['content'])
+    for pool in cluster_json['cluster']['nodePools']:
+        if 'labels' not in pool['config']:
+            pool['config']['labels'] = {}
+        labels = pool['config']['labels']
+        labels['project_id'] = project_id
+    cluster['content'] = json.dumps(cluster_json, indent=4)
+    print(cluster)
+    return cluster    
+
     
 def get_project_configuration(
     access_token,

@@ -136,8 +136,7 @@ class CreateProject extends React.Component {
                             onChange={this.handleName}>
                         </input>
                     </label>
-                    
-                    <label>
+                    {/* <label>
                         Project URL (optional)
                         <input 
                             placeholder="https://github.com/my_repository" 
@@ -145,7 +144,7 @@ class CreateProject extends React.Component {
                             className={'full-width'}
                         >
                         </input>
-                    </label>
+                    </label> */}
                     {this.getPredictedCostSection()}
                     <label>
                         Cluster JSON

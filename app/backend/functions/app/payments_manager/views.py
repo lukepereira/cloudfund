@@ -18,7 +18,7 @@ def create_charge(stripe_key, token, amount, project_id):
         currency='usd',
         description=use_cases.get_charge_description(token, project_id),
         source=token['id'],
-        #receipt_email=''
+        # receipt_email=''
     )
     if 'amount' not in charge:
         return
@@ -29,6 +29,7 @@ def create_charge(stripe_key, token, amount, project_id):
         charge,
         'pending_deposit'
     )
-    project['wallet'] = float(project['wallet']) + float(amount)
+    project['revenue'] = float(project['revenue']) + float(amount)
+    project['wallet'] = project['revenue'] - float(project['cumulative_cost'])
     updated_project = update_project(project)
     return charge

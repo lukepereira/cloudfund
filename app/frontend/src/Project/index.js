@@ -30,12 +30,20 @@ class Project extends React.Component {
                 display_name: 'Wallet',
             },
             {
-                display_content: this.props.project['cost']['monthly_cost'],
-                display_name: 'Monthly Cost'
+                display_content: this.props.project['predicted_cost']['monthly_cost'],
+                display_name: 'Predicted Monthly Cost'
             },
             {
-                display_content: this.props.project['cost']['hourly_cost'],
-                display_name: 'Hourly Cost'
+                display_content: this.props.project['predicted_cost']['hourly_cost'],
+                display_name: 'Predicted Hourly Cost'
+            },
+            {
+                display_content: this.props.project['revenue'],
+                display_name: 'Revenue',
+            },
+            {
+                display_content: this.props.project['cumulative_cost'],
+                display_name: 'Cumulative Cost',
             },
         ]
         : []

@@ -18,6 +18,7 @@ class DevelopmentConfig(Config):
     APP_URL = 'http://localhost:3000'
     GH_REPO_NAME = 'lukepereira/citizenserver'
     GOOGLE_PROJECT_ID = 'scenic-shift-130010'
+    BIG_QUERY_TABLE = 'scenic-shift-130010.resource_manager.gcp_billing_export_v1_017DB4_961B54_BD0D8E'
     DEBUG = True
 
 

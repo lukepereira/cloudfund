@@ -21,7 +21,9 @@ def create_project_entity(
         'sha': pull_request_sha,
         'group_ids': { 'values': [] },
         'date_created': datetime.datetime.utcnow(),
-        'cost': cost,
+        'predicted_cost': cost,
+        'cumulative_cost': 0,
+        'revenue': 0,
         'wallet': 0,
     }
     client = use_cases.get_client()
@@ -101,3 +103,16 @@ def approve_pending_payments(project_id):
         payment['status'] = 'deposited'
     client.put_multi(pending_payments)
     return pending_payments
+
+
+def set_project_costs(query_iterator):
+    for row in query_iterator:
+        project_id = row.value
+        cost = float(row.cost)
+        project = get_project(project_id)
+        if project_id:
+            project['cumulative_cost'] = cost
+            project['wallet'] = float(project['revenue']) - cost
+            update_project(project)
+    return
+    

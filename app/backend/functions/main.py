@@ -1,3 +1,4 @@
+import base64
 import json
 import uuid
 
@@ -7,6 +8,7 @@ from flask_cors import CORS, cross_origin
 from app import create_app
 from app.billing_manager.views import (
     handle_monthly_payment,
+    get_costs_from_bigquery,
     predict_project_cost,
     predict_cost_from_cluster_json,
 )
@@ -25,6 +27,7 @@ from app.projects_manager.views import (
     create_project_entity,
     get_all_projects,
     get_project,
+    set_project_costs,
     update_project_status,
 )
 
@@ -146,10 +149,15 @@ def handle_deployment_webhook(request):
 
 @app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-def test_deployment(request):
-    request_json = request.get_json()
-    res = create_deployment_from_configuration(
-        app.config['GOOGLE_PROJECT_ID'],
-        None,
-    )  
-    return jsonify(res)
+def handle_billing_pub_sub(request, context):
+    '''
+        gcloud functions deploy handle_billing_pub_sub --runtime python37 --trigger-resource billing-notifications --trigger-event google.pubsub.topic.publish
+    '''
+    if 'data' in request:
+        raw_data = base64.b64decode(request['data']).decode('utf-8')
+    
+    json_data = json.loads(raw_data)
+    cost_response = get_costs_from_bigquery(app.config['BIG_QUERY_TABLE'])
+    project_response = set_project_costs(cost_response)
+    return jsonify(json_data)
+     
