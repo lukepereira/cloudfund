@@ -1,7 +1,11 @@
 import React from 'react'
 import axios from 'axios'
-import './CreateProject.css'
+import { CLUSTER_JSON_SCHEMA } from '../Deployment/constants.js'
+import { JsonEditor as Editor } from 'jsoneditor-react'
+import Ajv from 'ajv'
+import 'jsoneditor-react/es/editor.min.css'
 
+import './CreateProject.css'
 
 class CreateProject extends React.Component {
     constructor(props) {
@@ -9,6 +13,7 @@ class CreateProject extends React.Component {
         this.state = {
             projectName: '',
             projectURL: '',
+            clusterFile: '',
             deploymentFile: '',
             cost: {
                 monthly_cost: 0,
@@ -157,7 +162,7 @@ class CreateProject extends React.Component {
                         >
                         </textarea>
                     </label>
-                    
+                
                     <label>
                         Deployment YAML
                         <textarea 

@@ -75,7 +75,7 @@ class ProjectLayout extends React.Component {
                 {this.getHeader()}
                 <Route exact path={`${this.props.match.path}/`} render={() => <Project project={this.state.project}/>} />
                 <Route path={`${this.props.match.path}/info`} render={() => <Project project={this.state.project}/>} />
-                <Route path={`${this.props.match.path}/deployment`} render={() => <Deployment project={this.state.project}/>} />
+                <Route path={`${this.props.match.path}/deployment`} render={() => <Deployment {...this.props} project={this.state.project}/>} />
                 <Route path={`${this.props.match.path}/payments`} render={() => <StripeWrapper project={this.state.project}/>} />
             </div>
         )
