@@ -15,7 +15,9 @@ from app.billing_manager.views import (
 from app.deployments_manager.views import (
     create_cluster_from_configuration,
     create_deployment_from_configuration,
-    get_project_configurations,
+    get_project_configurations_from_id,
+    get_project_configurations_from_pr,
+    stop_cluster_if_cost_exceeds_funds,
 )
 from app.github_manager.views import (
     create_project_pull_request,
@@ -101,6 +103,23 @@ def get_predicted_cost_from_json(request):
 
 @app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
+def get_project_configurations(request):
+    request_json = request.get_json()
+    project = get_project(request_json['project_id'])
+    cluster, deployment = get_project_configurations_from_id(
+        app.config['GH_ACCESS_TOKEN'],
+        app.config['GH_REPO_NAME'],
+        project,
+    )
+    response = {
+        'cluster': cluster,
+        'deployment': deployment,
+    }
+    return jsonify(response)
+
+
+@app.route('/', methods=['POST', 'OPTIONS'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_charge(request):
     request_json = request.get_json()
     charge = create_charge(
@@ -122,7 +141,7 @@ def handle_charge(request):
 def handle_deployment_webhook(request):
     request_json = request.get_json()
     if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
-        cluster, deployment = get_project_configurations(
+        cluster, deployment = get_project_configurations_from_pr(
             app.config['GH_ACCESS_TOKEN'],
             app.config['GH_REPO_NAME'],
             request_json['pull_request'],
@@ -138,7 +157,7 @@ def handle_deployment_webhook(request):
         )
         update_project_status(
             request_json['pull_request']['head']['ref'], 
-            'merged',
+            'running',
         )
         return jsonify({
             'cluster': cluster_response,
@@ -158,6 +177,13 @@ def handle_billing_pub_sub(request, context):
     
     json_data = json.loads(raw_data)
     cost_response = get_costs_from_bigquery(app.config['BIG_QUERY_TABLE'])
-    project_response = set_project_costs(cost_response)
+    projects_to_be_stopped = set_project_costs(cost_response)
+    if projects_to_be_stopped:
+        stopped_clusters = stop_cluster_if_cost_exceeds_funds(
+            app.config['GH_ACCESS_TOKEN'],
+            app.config['GH_REPO_NAME'],
+            app.config['GOOGLE_PROJECT_ID'],
+            projects_to_be_stopped,
+        )
+        print(stopped_clusters)
     return jsonify(json_data)
-     

@@ -18,15 +18,37 @@ def get_resources_from_cluster(cluster):
     return resource_data
 
 
-def get_project_configurations(
+def get_project_configurations_from_id(
+    access_token,
+    repo_name,
+    project,
+):
+    cluster = get_project_configuration(
+        access_token,
+        repo_name,
+        project['sha'],
+        project['project_id'],
+        'clusters',
+    )
+    cluster_json = json.loads(cluster)
+    
+    deployment = get_project_configuration(
+        access_token,
+        repo_name,
+        project['sha'],
+        project['project_id'],
+        'deployments',
+    )
+    deployment_yaml = yaml.load(deployment.decode("ascii"))
+    return cluster_json, yaml.dump(deployment_yaml)
+
+
+def get_project_configurations_from_pr(
     access_token,
     repo_name,
     pull_request,
 ):
     project_id = pull_request['head']['ref']
-    ref = 'refs/heads/{project_id}'.format(
-        project_id=project_id,
-    )
     cluster = get_project_configuration(
         access_token,
         repo_name,
@@ -80,3 +102,27 @@ def create_deployment_from_configuration(
         deployment,
     )
     return deployment_response
+
+def stop_cluster_if_cost_exceeds_funds(
+    access_token,
+    repo_name,
+    gcp_project, 
+    projects,
+):
+    response = []
+    for project in projects:
+        cluster = get_project_configuration(
+            access_token,
+            repo_name,
+            project['sha'],
+            project['project_id'],
+            'clusters',
+        )
+        cluster_json = json.loads(cluster)
+        cluster_response = use_cases.scale_cluster(
+            gcp_project=gcp_project,
+            cluster=cluster_json,
+            size=0,
+        )
+        response.append(cluster_response)
+    return response

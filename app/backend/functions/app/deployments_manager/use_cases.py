@@ -1,4 +1,5 @@
-#https://github.com/kubernetes-client/python/tree/master/examples
+# https://github.com/kubernetes-client/python/tree/master/examples
+# https://developers.google.com/resources/api-libraries/documentation/container/v1/python/latest/index.html
 import json
 from os import path
 import urllib
@@ -44,7 +45,7 @@ def get_cluster(
         response = cl.get(
             projectId=gcp_project,
             clusterId=cluster['cluster']['name'],
-            zone=zone,
+            zone=zone,  
         ).execute()
         return response
     except (urllib.error.HTTPError, Exception) as err:
@@ -64,7 +65,36 @@ def create_cluster(
         body=cluster
     ).execute()
     return response
-    
+
+
+def scale_cluster(
+    gcp_project,
+    cluster,
+    size,
+    version='v1beta1',
+):
+    service = build('container', version)
+    cl = service.projects().zones().clusters()
+    response = []
+    for pool in cluster['nodePools']:
+        body = {
+            'projectId': gcp_project,
+            'zone': cluster['cluster']['location'],
+            'clusterId': cluster['cluster']['name'],
+            'nodePoolId': pool['name'],
+            'nodeCount': size,
+        }
+        node_pool_response = cl.setSize(
+            projectId=gcp_project,
+            zone=cluster['cluster']['location'],
+            clusterId=cluster['cluster']['name'],
+            nodePoolId=pool['name'],
+            nodeCount=size,
+            body=cluster,
+        ).execute()
+        response.append(node_pool_response)
+    return response
+
     
 def get_k8_api(
     gcp_project,

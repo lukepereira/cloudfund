@@ -45,13 +45,17 @@ def create_project_pull_request(
     
 def validate_cluster(project_id, cluster):
     cluster_json = json.loads(cluster['content'])
+    
+    if 'resourceLabels' not in cluster_json['cluster']:
+        cluster_json['cluster']['resourceLabels'] = {}
+    cluster_json['cluster']['resourceLabels']['project_id'] = project_id
+    
     for pool in cluster_json['cluster']['nodePools']:
         if 'labels' not in pool['config']:
             pool['config']['labels'] = {}
-        labels = pool['config']['labels']
-        labels['project_id'] = project_id
+        pool['config']['labels']['project_id'] = project_id
+
     cluster['content'] = json.dumps(cluster_json, indent=4)
-    print(cluster)
     return cluster    
 
     

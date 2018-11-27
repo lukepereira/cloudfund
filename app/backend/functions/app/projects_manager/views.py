@@ -97,7 +97,7 @@ def approve_pending_payments(project_id):
     pending_payments = use_cases.get_project_payments(
         client, 
         project_id, 
-        'pending_deposit'
+        'pending_deposit',
     )
     for payment in pending_payments:
         payment['status'] = 'deposited'
@@ -106,13 +106,17 @@ def approve_pending_payments(project_id):
 
 
 def set_project_costs(query_iterator):
+    projects_to_be_stopped = []
     for row in query_iterator:
         project_id = row.value
         cost = float(row.cost)
         project = get_project(project_id)
-        if project_id:
+        if project:
             project['cumulative_cost'] = cost
             project['wallet'] = float(project['revenue']) - cost
+            if project['wallet'] < project['predicted_cost']['hourly_cost']:
+                projects_to_be_stopped.append(project)
+                project['status'] = 'stopped '#TODO: set status after stopping
             update_project(project)
-    return
+    return projects_to_be_stopped
     

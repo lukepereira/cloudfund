@@ -120,6 +120,4 @@ def query_bigquery(query):
     client = bigquery.Client()
     query_job = client.query(query)  
     rows = query_job.result()
-    for row in rows:
-        print(row)
     return rows
