@@ -33,6 +33,7 @@
     text-transform: uppercase;
     letter-spacing: 0.025em;
     background-color: #6772e5;
+    background-image: linear-gradient(to top, #00799d, #0091ad, #00a8b3, #00bfae, #03d49f);
     text-decoration: none;
     -webkit-transition: all 150ms ease;
     transition: all 150ms ease;
@@ -47,6 +48,7 @@
     color: #fff;
     cursor: pointer;
     background-color: #7795f8;
+    background-image: linear-gradient(to top, #22b09f, #00c5a2, #0bd99f, #36ec96, #5eff88);
     transform: translateY(-1px);
     box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
 }

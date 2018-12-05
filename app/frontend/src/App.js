@@ -3,34 +3,43 @@ import {
     Switch,
     Route,
 } from 'react-router-dom'
+import AppLayout from './AppLayout'
 import CreateProject from './CreateProject'
-import ProjectLayout from './ProjectLayout'
-import ProjectList from './ProjectList'
+import ProjectContainer from './ProjectContainer'
+import ProjectsMenu from './ProjectsMenu'
+import ProjectMenu from './ProjectMenu'
 import './App.css'
 
-const Projects = () => {
+const ProjectsLayout = () => {
     return (    
         <div>
-            <ProjectList/>
-            <CreateProject />
+            <AppLayout 
+                menuContent={<ProjectsMenu/>} 
+                bodyContent={<CreateProject />}
+            />
         </div>
     )
 }
 
-const Main = () => (
+const ProjectLayout = () => {
+    return (    
+        <div>
+            <AppLayout 
+                menuContent={<ProjectMenu/>} 
+                bodyContent={<ProjectContainer />} 
+            />
+        </div>
+    )
+}
+
+const App = () => (
     <main>
         <Switch>
-            <Route exact path='/' component={Projects}/>
-            <Route path='/create' component={Projects}/>
+            <Route exact path='/' component={ProjectsLayout}/>
+            <Route path='/create' component={ProjectsLayout}/>
             <Route path='/project/:project_id' component={ProjectLayout}/>
         </Switch>
     </main>
-)
-
-const App = () => (
-  <div>
-    <Main />
-  </div>
 )
 
 export default App

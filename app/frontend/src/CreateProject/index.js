@@ -1,9 +1,9 @@
 import React from 'react'
 import axios from 'axios'
 import { CLUSTER_JSON_SCHEMA } from '../Deployment/constants.js'
-import { JsonEditor as Editor } from 'jsoneditor-react'
-import Ajv from 'ajv'
-import 'jsoneditor-react/es/editor.min.css'
+import { withRouter } from 'react-router-dom'
+import SimpleListMenu from '../components/SimpleListMenu'
+import SimpleSelect from '../components/SimpleSelect'
 
 import './CreateProject.css'
 
@@ -45,7 +45,6 @@ class CreateProject extends React.Component {
     }
         
     handleSubmit = () => {
-        
         if (
             !this.state.projectName 
             || !this.state.clusterFile
@@ -79,6 +78,8 @@ class CreateProject extends React.Component {
         )
         .then(function (response) {
             console.log(response);
+            const project_id = response.data
+            this.props.history.push(`project/${project_id}`)
         })
         .catch(function (error) {
             console.log(error);
@@ -134,6 +135,21 @@ class CreateProject extends React.Component {
             <div className="CreateProject">
                 <div>
                     <h1>Create Project</h1>
+                    
+                    <SimpleListMenu
+                        options={[
+                            'Cluster Template',
+                            'Cluster JSON',
+                        ]}
+                    />
+                    
+                    <SimpleSelect
+                        name={'test'}
+                        options={[
+                            { val: 'a', label: 'a'},
+                            { val: 'b', label: 'b'},
+                        ]}
+                    />
                     <label>
                         Name
                         <input 
@@ -153,7 +169,8 @@ class CreateProject extends React.Component {
                     {this.getPredictedCostSection()}
                     <label>
                         Cluster JSON
-                        <textarea 
+                        <textarea
+                            data-gramm_editor='false'
                             placeholder=""
                             rows='12'
                             col='25'
@@ -165,7 +182,8 @@ class CreateProject extends React.Component {
                 
                     <label>
                         Deployment YAML
-                        <textarea 
+                        <textarea
+                            data-gramm_editor='false'
                             placeholder=""
                             rows='12'
                             col='25'
@@ -182,4 +200,4 @@ class CreateProject extends React.Component {
     }
 }
 
-export default CreateProject
+export default withRouter(CreateProject)
