@@ -39,8 +39,8 @@ def get_project_configurations_from_id(
         project['project_id'],
         'deployments',
     )
-    deployment_yaml = yaml.load(deployment.decode("ascii"))
-    return cluster_json, yaml.dump(deployment_yaml)
+    deployment_yaml = yaml.load_all(deployment.decode("ascii"))
+    return cluster_json, yaml.dump(list(deployment_yaml)) #TODO: fix
 
 
 def get_project_configurations_from_pr(
@@ -65,7 +65,8 @@ def get_project_configurations_from_pr(
         pull_request['head']['ref'],
         'deployments',
     )
-    deployment_yaml = yaml.load(deployment.decode("ascii"))
+    # yaml.load_all returns a generator
+    deployment_yaml = yaml.load_all(deployment.decode("ascii"))
     return cluster_json, deployment_yaml 
 
 
@@ -103,6 +104,27 @@ def create_deployment_from_configuration(
     )
     return deployment_response
 
+
+def create_deployment_from_generator(
+    gcp_project,
+    cluster,
+    deployment_generator,
+):
+    api_instance = use_cases.get_k8_api(
+        gcp_project=gcp_project,
+        zone=cluster['cluster']['location'],
+        cluster_id=cluster['cluster']['name'],
+    )
+    deployment_responses = []
+    for deployment in deployment_generator:
+        deployment_response = use_cases.create_deployment(
+            api_instance,
+            deployment,
+        )
+        deployment_responses.append(deployment_response)
+    return deployment_responses
+
+
 def stop_cluster_if_cost_exceeds_funds(
     access_token,
     repo_name,
@@ -126,3 +148,24 @@ def stop_cluster_if_cost_exceeds_funds(
         )
         response.append(cluster_response)
     return response
+
+
+def enable_kubeless_on_cluster(
+    gcp_project,
+    cluster,
+):
+    api_instance = use_cases.get_k8_api(
+        gcp_project=gcp_project,
+        zone=cluster['cluster']['location'],
+        cluster_id=cluster['cluster']['name'],
+    )
+    api_response = use_cases.create_namespace(
+        api_instance=api_instance,
+        namespace='kubeless',
+    )
+    kubeless_deployments = use_cases.get_kubeless_yaml()
+    for deployment in kubeless_deployments:
+        deployment_response = use_cases.create_deployment(
+            api_instance,
+            deployment,
+        )

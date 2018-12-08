@@ -3,13 +3,15 @@
 import json
 from os import path
 import urllib
+import yaml
 
 from apiclient.discovery import build
 from google.auth import compute_engine
 from google.cloud.container_v1 import ClusterManagerClient
 from kubernetes import client, config
+import requests
 
-from . import config 
+from . import config
 
 
 def find_values(id, json_repr):
@@ -76,26 +78,42 @@ def scale_cluster(
     service = build('container', version)
     cl = service.projects().zones().clusters()
     response = []
-    for pool in cluster['nodePools']:
-        body = {
-            'projectId': gcp_project,
-            'zone': cluster['cluster']['location'],
-            'clusterId': cluster['cluster']['name'],
-            'nodePoolId': pool['name'],
-            'nodeCount': size,
-        }
-        node_pool_response = cl.setSize(
-            projectId=gcp_project,
-            zone=cluster['cluster']['location'],
-            clusterId=cluster['cluster']['name'],
-            nodePoolId=pool['name'],
-            nodeCount=size,
-            body=cluster,
-        ).execute()
-        response.append(node_pool_response)
-    return response
-
+    cluster_response = cl.delete(
+        projectId=gcp_project,
+        clusterId=cluster['cluster']['name'],
+        zone=cluster['cluster']['location'],
+    ).execute()
+    # print(cluster_response)
+    ## unresolved bug in GKE prevents scaling nodepools to 0
+    ## https://stackoverflow.com/questions/44525692/google-cloud-deployment-manager-update-container-cluster
     
+    # for pool in cluster['cluster']['nodePools']:
+    #     body = {
+    #         'projectId': gcp_project,
+    #         'zone': cluster['cluster']['location'],
+    #         'clusterId': cluster['cluster']['name'],
+    #         'nodePoolId': pool['name'],
+    #         'nodeCount': size,
+    #     }
+    #     
+    #     node_pool_response = cl.setSize(
+    #         projectId=gcp_project,
+    #         zone=cluster['cluster']['location'],
+    #         clusterId=cluster['cluster']['name'],
+    #         nodePoolId=pool['name'],
+    #         body=cluster,
+    #     ).execute()
+    #     response.append(node_pool_response)
+    #    node_pool_response = cl.delete(
+    #        projectId=gcp_project,
+    #        clusterId=cluster['cluster']['name'],
+    #        zone=cluster['cluster']['location'],
+    #        nodePoolId=pool['name'],
+    #    ).execute()
+    #    response.append(node_pool_response)
+    return cluster_response
+
+
 def get_k8_api(
     gcp_project,
     zone,
@@ -161,3 +179,25 @@ def delete_deployment(api_instance, deployment_name):
             propagation_policy='Foreground',
             grace_period_seconds=5))
     return sanitize_k8_object(api_response)
+
+
+def create_namespace(api_instance, namespace):
+    body = client.V1Namespace(
+        metadata=client.V1ObjectMeta(name=namespace)
+    )
+    api_response = api_instance.create_namespace(
+        body,
+        include_uninitialized=include_uninitialized,
+    )
+    
+
+def get_kubeless_yaml():
+    release = requests.get('https://api.github.com/repos/kubeless/kubeless/releases/latest')
+    release_json = release.json()
+    release_version = release_json['tag_name']
+    kubeless_deployment_url = 'https://github.com/kubeless/kubeless/releases/download/{release_version}/kubeless-{release_version}.yaml'.format(
+        release_version=release_version,
+    )
+    kubeless_deployment = requests.get(kubeless_deployment_url)
+    deployments_generator = yaml.load_all(kubeless_deployment.text)
+    return deployments_generator
