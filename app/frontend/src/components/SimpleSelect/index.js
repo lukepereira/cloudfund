@@ -17,6 +17,7 @@ const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
     minWidth: 120,
+    width: '100%',
   },
   selectEmpty: {
     marginTop: theme.spacing.unit * 2,
@@ -50,9 +51,6 @@ class SimpleSelect extends React.Component {
             name={this.props.name}
             className={classes.selectEmpty}
           >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
             {
                 this.props.options.map((option)=> (
                     <MenuItem 

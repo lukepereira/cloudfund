@@ -29,8 +29,9 @@ class SimpleListMenu extends React.Component {
     this.setState({ anchorEl: event.currentTarget })
   }
 
-  handleMenuItemClick = (event, index) => {
+  handleMenuItemClick = (option, index) => {
     this.setState({ selectedIndex: index, anchorEl: null })
+    this.props.onChange(option)
   }
 
   handleClose = () => {
@@ -67,7 +68,7 @@ class SimpleListMenu extends React.Component {
             <MenuItem
               key={option}
               selected={index === this.state.selectedIndex}
-              onClick={event => this.handleMenuItemClick(event, index)}
+              onClick={() => this.handleMenuItemClick(option, index)}
             >
               {option}
             </MenuItem>

@@ -1,9 +1,6 @@
 import React from 'react'
 import axios from 'axios'
 import { CLUSTER_JSON_SCHEMA } from './constants.js'
-import { JsonEditor as Editor } from 'jsoneditor-react'
-import Ajv from 'ajv'
-import 'jsoneditor-react/es/editor.min.css'
 import './Deployment.css'
 
 
@@ -11,8 +8,8 @@ class Deployment extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            cluster: {},
-            deployment: '',
+            cluster: 'loading...',
+            deployment: 'loading...',
         }
     }    
     
@@ -42,7 +39,7 @@ class Deployment extends React.Component {
         .then((response) => {
             console.log(response.data)
             console.log(response.data.cluster)
-            const cluster =  response.data.cluster //JSON.stringify(response.data.cluster, null, 2)
+            const cluster = JSON.stringify(response.data.cluster, null, 2)
             const deployment = response.data.deployment
             this.setState({cluster, deployment})
         })
@@ -56,21 +53,18 @@ class Deployment extends React.Component {
             <div className="Deployment">
                 <form  onSubmit={this.handleSubmit}>
                     <h1>Deployment</h1>
-                    
-                    {
-                        this.state.cluster.cluster &&
-                        <label>
-                            Cluster JSON
-                            <Editor
-                                value={this.state.cluster}
-                                onChange={this.handleClusterUpdate}
-                                schema={CLUSTER_JSON_SCHEMA}
-                                theme="ace/theme/github"
-                                ajv={Ajv({ allErrors: true, verbose: true })}
-                            />
-                        </label>
-                    }
-                    
+                    <label>
+                        Deployment YAML
+                        <textarea 
+                            value={this.state.cluster}
+                            placeholder=""
+                            rows='12'
+                            col='25'
+                            onChange={this.handleClusterUpdate}
+                            className={'full-width'}
+                        >
+                        </textarea>
+                    </label>
                     <label>
                         Deployment YAML
                         <textarea 

@@ -1,9 +1,11 @@
 import React from 'react'
 import axios from 'axios'
 import { CLUSTER_JSON_SCHEMA } from '../Deployment/constants.js'
+import { CLUSTER_FORMS, REGIONS, MACHINE_TYPES } from './constants'
 import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
 import SimpleSelect from '../components/SimpleSelect'
+import TextField from '../components/TextField'
 
 import './CreateProject.css'
 
@@ -11,6 +13,7 @@ class CreateProject extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            clusterForm: CLUSTER_FORMS.TEMPLATE_FORM,
             projectName: '',
             projectURL: '',
             clusterFile: '',
@@ -120,14 +123,57 @@ class CreateProject extends React.Component {
     getPredictedCostSection = () => (
         this.state.cost &&
         <div>
-                <div>
-                    {`Monthly Cost: $${this.state.cost.monthly_cost} USD`}
-                </div>
-                <div>
-                    {`Hourly Cost: $${this.state.cost.hourly_cost} USD`}
-                </div>
+            <div>
+                {`Monthly Cost: $${this.state.cost.monthly_cost} USD`}
+            </div>
+            <div>
+                {`Hourly Cost: $${this.state.cost.hourly_cost} USD`}
+            </div>
         </div>
-        
+    )
+    
+    getClusterTemplateForm = () => (
+        <div>
+            <TextField
+                name={'name'}
+                label={'Cluster Name'}
+                placeholder={''} 
+            />
+            
+            <SimpleSelect
+                name={'region'}
+                placeholder={'Location type is permanent'}
+                inputLabel={'Region'}
+                options={REGIONS}
+            />
+            
+            <TextField
+                name={'number_of_nodes'}
+                label={'Number of Nodes'}
+                type={'number'}
+            />
+
+            <SimpleSelect
+                name={'machine_type'}
+                inputLabel={'Machine Type'}
+                options={MACHINE_TYPES}
+            />
+        </div>
+    )
+    
+    getClusterJSONForm = () => (
+        <label>
+            Cluster JSON
+            <textarea
+                data-gramm_editor='false'
+                placeholder=""
+                rows='12'
+                col='25'
+                onChange={this.handleCluster}
+                className={'full-width'}
+            >
+            </textarea>
+        </label>
     )
     
     render() {
@@ -136,49 +182,30 @@ class CreateProject extends React.Component {
                 <div>
                     <h1>Create Project</h1>
                     
-                    <SimpleListMenu
-                        options={[
-                            'Cluster Template',
-                            'Cluster JSON',
-                        ]}
+                    { this.getPredictedCostSection() }
+                    
+                    <TextField
+                        name={'project_name'}
+                        label={'Project Name'}
+                        placeholder={''} 
                     />
                     
-                    <SimpleSelect
-                        name={'test'}
+                    <SimpleListMenu
                         options={[
-                            { val: 'a', label: 'a'},
-                            { val: 'b', label: 'b'},
+                            CLUSTER_FORMS.TEMPLATE_FORM ,
+                            CLUSTER_FORMS.JSON_FORM,
                         ]}
+                        onChange={(selectedOption) => this.setState({'clusterForm': selectedOption})}
                     />
-                    <label>
-                        Name
-                        <input 
-                            placeholder="My Project" 
-                            onChange={this.handleName}>
-                        </input>
-                    </label>
-                    {/* <label>
-                        Project URL (optional)
-                        <input 
-                            placeholder="https://github.com/my_repository" 
-                            onChange={this.handleRepository}
-                            className={'full-width'}
-                        >
-                        </input>
-                    </label> */}
-                    {this.getPredictedCostSection()}
-                    <label>
-                        Cluster JSON
-                        <textarea
-                            data-gramm_editor='false'
-                            placeholder=""
-                            rows='12'
-                            col='25'
-                            onChange={this.handleCluster}
-                            className={'full-width'}
-                        >
-                        </textarea>
-                    </label>
+                    
+                    {
+                        this.state.clusterForm === CLUSTER_FORMS.TEMPLATE_FORM &&
+                        this.getClusterTemplateForm()
+                    }
+                    {
+                        this.state.clusterForm === CLUSTER_FORMS.JSON_FORM &&
+                        this.getClusterJSONForm()
+                    }
                 
                     <label>
                         Deployment YAML
