@@ -1,11 +1,9 @@
 import React from 'react'
 import {
     Route,
-    Link,
     withRouter,
 } from 'react-router-dom'
 import axios from 'axios'
-import AppLayout from '../AppLayout'
 import Deployment from '../Deployment'
 import Project from '../Project'
 import StripeWrapper from '../StripeWrapper'

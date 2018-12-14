@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import { CLUSTER_JSON_SCHEMA } from './constants.js'
 import './Deployment.css'
 
 

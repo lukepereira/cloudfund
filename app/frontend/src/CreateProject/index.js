@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import { CLUSTER_JSON_SCHEMA } from '../Deployment/constants.js'
 import { CLUSTER_FORMS, REGIONS, MACHINE_TYPES } from './constants'
 import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
@@ -180,7 +179,7 @@ class CreateProject extends React.Component {
         return (
             <div className="CreateProject">
                 <div>
-                    <h1>Create Project</h1>
+                    <h1>Create</h1>
                     
                     { this.getPredictedCostSection() }
                     
