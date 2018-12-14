@@ -15,6 +15,8 @@ from app.billing_manager.views import (
 from app.deployments_manager.views import (
     create_cluster_from_configuration,
     create_deployment_from_configuration,
+    create_deployment_from_generator,
+    enable_kubeless_on_cluster,
     get_project_configurations_from_id,
     get_project_configurations_from_pr,
     stop_cluster_if_cost_exceeds_funds,
@@ -141,7 +143,7 @@ def handle_charge(request):
 def handle_deployment_webhook(request):
     request_json = request.get_json()
     if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
-        cluster, deployment = get_project_configurations_from_pr(
+        cluster, deployment_generator = get_project_configurations_from_pr(
             app.config['GH_ACCESS_TOKEN'],
             app.config['GH_REPO_NAME'],
             request_json['pull_request'],
@@ -150,12 +152,16 @@ def handle_deployment_webhook(request):
             app.config['GOOGLE_PROJECT_ID'],
             cluster,
         )
-        deployment_response = create_deployment_from_configuration(
+        kubeless_response = enable_kubeless_on_cluster(
             app.config['GOOGLE_PROJECT_ID'],
             cluster,
-            deployment,
         )
-        update_project_status(
+        deployment_response = create_deployment_from_generator(
+            app.config['GOOGLE_PROJECT_ID'],
+            cluster,
+            deployment_generator,
+        )
+        status_response = update_project_status(
             request_json['pull_request']['head']['ref'], 
             'running',
         )
@@ -170,7 +176,7 @@ def handle_deployment_webhook(request):
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_billing_pub_sub(request, context):
     '''
-        gcloud functions deploy handle_billing_pub_sub --runtime python37 --trigger-resource billing-notifications --trigger-event google.pubsub.topic.publish
+        Deploy: gcloud functions deploy handle_billing_pub_sub --runtime python37 --trigger-resource billing-notifications --trigger-event google.pubsub.topic.publish
     '''
     if 'data' in request:
         raw_data = base64.b64decode(request['data']).decode('utf-8')
@@ -187,3 +193,4 @@ def handle_billing_pub_sub(request, context):
         )
         print(stopped_clusters)
     return jsonify(json_data)
+
