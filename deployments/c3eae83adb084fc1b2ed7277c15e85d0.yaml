@@ -1,0 +1,37 @@
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "citizenserver"
+  namespace: "default"
+  labels:
+    app: "citizenserver"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "citizenserver"
+  template:
+    metadata:
+      labels:
+        app: "citizenserver"
+    spec:
+      containers:
+      - name: "citizenserver"
+        image: "docker.io/lukepereira/citizenserver:v1"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: "citizenserver"
+spec:
+  selector:
+    app: "citizenserver"
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
