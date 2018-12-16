@@ -52,6 +52,7 @@ class CreateProject extends React.Component {
             || !this.state.clusterFile
             || !this.state.deploymentFile
         ){
+            
             return
         }
         
@@ -78,12 +79,12 @@ class CreateProject extends React.Component {
             },
             config
         )
-        .then(function (response) {
+        .then((response) => {
             console.log(response);
             const project_id = response.data
             this.props.history.push(`project/${project_id}`)
         })
-        .catch(function (error) {
+        .catch((error) => {
             console.log(error);
         })
     }
@@ -186,7 +187,8 @@ class CreateProject extends React.Component {
                     <TextField
                         name={'project_name'}
                         label={'Project Name'}
-                        placeholder={''} 
+                        placeholder={''}
+                        onChange={this.handleName}
                     />
                     
                     <SimpleListMenu

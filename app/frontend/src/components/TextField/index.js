@@ -32,6 +32,7 @@ class TextFields extends React.Component {
 		this.setState({
 			[this.props.name]: event.target.value,
 		});
+		this.props.onChange(event)
 	};
 
 	render() {
