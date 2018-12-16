@@ -64,7 +64,7 @@ def create_cluster(
     response = cl.create(
         projectId=gcp_project,
         zone=zone,
-        body=cluster
+        body=cluster,
     ).execute()
     return response
 
@@ -148,11 +148,11 @@ def sanitize_k8_object(k8_object):
     return api.sanitize_for_serialization(k8_object)
 
 
-def create_deployment(api_instance, deployment):
+def create_deployment(api_instance, deployment, namespace='default'):
     try:
         api_response = api_instance.create_namespaced_deployment(
             body=deployment,
-            namespace='default',
+            namespace=namespace,
         )
         return sanitize_k8_object(api_response)
     except (client.rest.ApiException) as error:
@@ -180,16 +180,6 @@ def delete_deployment(api_instance, deployment_name):
             grace_period_seconds=5))
     return sanitize_k8_object(api_response)
 
-
-def create_namespace(api_instance, namespace):
-    body = client.V1Namespace(
-        metadata=client.V1ObjectMeta(name=namespace)
-    )
-    api_response = api_instance.create_namespace(
-        body,
-        include_uninitialized=include_uninitialized,
-    )
-    
 
 def get_kubeless_yaml():
     release = requests.get('https://api.github.com/repos/kubeless/kubeless/releases/latest')

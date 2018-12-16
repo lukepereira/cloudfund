@@ -142,7 +142,7 @@ def handle_charge(request):
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_deployment_webhook(request):
     request_json = request.get_json()
-    if request_json['action'] != 'closed' and request_json['pull_request']['merged'] == 'true':
+    if request_json['action'] == 'closed' and request_json['pull_request']['merged'] == True:
         cluster, deployment_generator = get_project_configurations_from_pr(
             app.config['GH_ACCESS_TOKEN'],
             app.config['GH_REPO_NAME'],
@@ -152,10 +152,10 @@ def handle_deployment_webhook(request):
             app.config['GOOGLE_PROJECT_ID'],
             cluster,
         )
-        kubeless_response = enable_kubeless_on_cluster(
-            app.config['GOOGLE_PROJECT_ID'],
-            cluster,
-        )
+        # kubeless_response = enable_kubeless_on_cluster(
+        #     app.config['GOOGLE_PROJECT_ID'],
+        #     cluster,
+        # )
         deployment_response = create_deployment_from_generator(
             app.config['GOOGLE_PROJECT_ID'],
             cluster,

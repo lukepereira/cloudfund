@@ -99,8 +99,8 @@ def create_deployment_from_configuration(
         cluster_id=cluster['cluster']['name'],
     )
     deployment_response = use_cases.create_deployment(
-        api_instance,
-        deployment,
+        api_instance=api_instance,
+        deployment=deployment,
     )
     return deployment_response
 
@@ -118,8 +118,8 @@ def create_deployment_from_generator(
     deployment_responses = []
     for deployment in deployment_generator:
         deployment_response = use_cases.create_deployment(
-            api_instance,
-            deployment,
+            api_instance=api_instance,
+            deployment=deployment,
         )
         deployment_responses.append(deployment_response)
     return deployment_responses
@@ -159,13 +159,10 @@ def enable_kubeless_on_cluster(
         zone=cluster['cluster']['location'],
         cluster_id=cluster['cluster']['name'],
     )
-    api_response = use_cases.create_namespace(
-        api_instance=api_instance,
-        namespace='kubeless',
-    )
     kubeless_deployments = use_cases.get_kubeless_yaml()
     for deployment in kubeless_deployments:
         deployment_response = use_cases.create_deployment(
-            api_instance,
-            deployment,
+            api_instance=api_instance,
+            deployment=deployment,
+            namespace='kubeless'
         )
