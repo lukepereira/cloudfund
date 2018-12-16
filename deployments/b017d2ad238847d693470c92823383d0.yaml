@@ -1,0 +1,22 @@
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "citizenserver"
+  namespace: "default"
+  labels:
+    app: "citizenserver"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "citizenserver"
+  template:
+    metadata:
+      labels:
+        app: "citizenserver"
+    spec:
+      containers:
+      - name: "citizenserver"
+        image: "lukepereira/citizenserver:v1"
+        ports:
+        - containerPort: 8080
