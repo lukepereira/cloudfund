@@ -142,7 +142,7 @@ def handle_charge(request):
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_deployment_webhook(request):
     request_json = request.get_json()
-    if request_json['action'] == 'closed' and request_json['pull_request']['merged'] == True:
+    if request_json['action'] == 'closed': #and request_json['pull_request']['merged'] == True:
         cluster, deployment_generator = get_project_configurations_from_pr(
             app.config['GH_ACCESS_TOKEN'],
             app.config['GH_REPO_NAME'],
@@ -152,6 +152,7 @@ def handle_deployment_webhook(request):
             app.config['GOOGLE_PROJECT_ID'],
             cluster,
         )
+        #TODO: get this working
         # kubeless_response = enable_kubeless_on_cluster(
         #     app.config['GOOGLE_PROJECT_ID'],
         #     cluster,
@@ -165,10 +166,6 @@ def handle_deployment_webhook(request):
             request_json['pull_request']['head']['ref'], 
             'running',
         )
-        return jsonify({
-            'cluster': cluster_response,
-            'deployment': deployment_response, 
-        })
     return jsonify(request_json)
 
 
@@ -183,14 +180,29 @@ def handle_billing_pub_sub(request, context):
     
     json_data = json.loads(raw_data)
     cost_response = get_costs_from_bigquery(app.config['BIG_QUERY_TABLE'])
-    projects_to_be_stopped = set_project_costs(cost_response)
-    if projects_to_be_stopped:
+    projects = set_project_costs(cost_response)
+    
+    if projects['to_stop']:
         stopped_clusters = stop_cluster_if_cost_exceeds_funds(
             app.config['GH_ACCESS_TOKEN'],
             app.config['GH_REPO_NAME'],
             app.config['GOOGLE_PROJECT_ID'],
-            projects_to_be_stopped,
+            projects['to_stop'],
         )
         print(stopped_clusters)
+
+    if projects['to_deploy']:
+        for project in projects['to_deploy']:
+            cluster, deployment_generator = get_project_configurations_from_id(
+                app.config['GH_ACCESS_TOKEN'],
+                app.config['GH_REPO_NAME'],
+                project,
+            )
+            deployment_response = create_deployment_from_generator(
+                app.config['GOOGLE_PROJECT_ID'],
+                cluster,
+                deployment_generator,
+            )
+    
     return jsonify(json_data)
 

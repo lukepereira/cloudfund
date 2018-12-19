@@ -117,18 +117,46 @@ def create_deployment_from_generator(
     )
     deployment_responses = []
     for deployment in deployment_generator:
-        deployment_response = use_cases.create_deployment(
-            api_instance=api_instance,
-            deployment=deployment,
-        )
+        deployment_response = {}
+        if deployment['kind'] == 'Service':
+            service_response = create_service_from_configuration(
+                gcp_project=gcp_project,
+                cluster=cluster,
+                service=deployment,
+            )
+            print (service_response)
+            print (dir(service_response))
+        else:
+            deployment_response = use_cases.create_deployment(
+                api_instance=api_instance,
+                deployment=deployment,
+            )
         deployment_responses.append(deployment_response)
     return deployment_responses
+
+
+def create_service_from_configuration(
+    gcp_project,
+    cluster,
+    service,
+):
+    v1_api_instance = use_cases.get_k8_api(
+        gcp_project=gcp_project,
+        zone=cluster['cluster']['location'],
+        cluster_id=cluster['cluster']['name'],
+        client_version='CoreV1Api'
+    )
+    service_response = use_cases.create_service(
+        api_instance=v1_api_instance,
+        service=service,
+    )
+    return service_response
 
 
 def stop_cluster_if_cost_exceeds_funds(
     access_token,
     repo_name,
-    gcp_project, 
+    gcp_project,
     projects,
 ):
     response = []
@@ -158,6 +186,7 @@ def enable_kubeless_on_cluster(
         gcp_project=gcp_project,
         zone=cluster['cluster']['location'],
         cluster_id=cluster['cluster']['name'],
+        version='AppsV1beta1',
     )
     kubeless_deployments = use_cases.get_kubeless_yaml()
     for deployment in kubeless_deployments:
@@ -166,3 +195,33 @@ def enable_kubeless_on_cluster(
             deployment=deployment,
             namespace='kubeless'
         )
+
+#TODO: get this working for web app scaling
+def create_hpa(self, tosca_kube_obj, kube_obj_name):
+    scaling_props = tosca_kube_obj.scaling_object
+    hpa = None
+    if scaling_props:
+        min_replicas = scaling_props.min_replicas
+        max_replicas = scaling_props.max_replicas
+        cpu_util = scaling_props.target_cpu_utilization_percentage
+        deployment_name = kube_obj_name
+
+        # Create target Deployment object
+        target = client.V1CrossVersionObjectReference(
+            api_version="extensions/v1beta1",
+            kind="Deployment",
+            name=deployment_name)
+        # Create the specification of horizon pod auto-scaling
+        hpa_spec = client.V1HorizontalPodAutoscalerSpec(
+            min_replicas=min_replicas,
+            max_replicas=max_replicas,
+            target_cpu_utilization_percentage=cpu_util,
+            scale_target_ref=target)
+        metadata = client.V1ObjectMeta(name=deployment_name)
+        # Create Horizon Pod Auto-Scaling
+        hpa = client.V1HorizontalPodAutoscaler(
+            api_version="autoscaling/v1",
+            kind="HorizontalPodAutoscaler",
+            spec=hpa_spec,
+            metadata=metadata)
+    return hpa
