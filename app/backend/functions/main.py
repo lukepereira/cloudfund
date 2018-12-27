@@ -157,14 +157,14 @@ def handle_deployment_webhook(request):
         #     app.config['GOOGLE_PROJECT_ID'],
         #     cluster,
         # )
-        deployment_response = create_deployment_from_generator(
-            app.config['GOOGLE_PROJECT_ID'],
-            cluster,
-            deployment_generator,
-        )
+        # deployment_response = create_deployment_from_generator(
+        #     app.config['GOOGLE_PROJECT_ID'],
+        #     cluster,
+        #     deployment_generator,
+        # )
         status_response = update_project_status(
             request_json['pull_request']['head']['ref'], 
-            'running',
+            'pending_deployment',
         )
     return jsonify(request_json)
 
@@ -191,8 +191,8 @@ def handle_billing_pub_sub(request, context):
         )
         print(stopped_clusters)
 
-    if projects['to_deploy']:
-        for project in projects['to_deploy']:
+    for project in projects['to_deploy']:
+        if project['status'] != 'running':  # use const
             cluster, deployment_generator = get_project_configurations_from_id(
                 app.config['GH_ACCESS_TOKEN'],
                 app.config['GH_REPO_NAME'],
@@ -202,6 +202,10 @@ def handle_billing_pub_sub(request, context):
                 app.config['GOOGLE_PROJECT_ID'],
                 cluster,
                 deployment_generator,
+            )
+            status_response = update_project_status(
+                request_json['pull_request']['head']['ref'], 
+                'running',
             )
     
     return jsonify(json_data)

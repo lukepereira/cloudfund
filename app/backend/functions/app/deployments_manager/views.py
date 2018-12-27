@@ -40,7 +40,7 @@ def get_project_configurations_from_id(
         'deployments',
     )
     deployment_yaml = yaml.load_all(deployment.decode("ascii"))
-    return cluster_json, yaml.dump(list(deployment_yaml)) #TODO: fix
+    return cluster_json, deployment_yaml
 
 
 def get_project_configurations_from_pr(
