@@ -1,4 +1,5 @@
 import datetime
+import json
 import uuid
 
 from . import use_cases
@@ -11,7 +12,9 @@ def create_project_entity(
     pull_request_url, 
     pull_request_sha,
     cost,
+    cluster,
 ):
+    cluster_json =  json.loads(cluster['content'])
     project_info = {
         'project_id': project_id,
         'project_name': project_name,
@@ -25,6 +28,7 @@ def create_project_entity(
         'cumulative_cost': 0,
         'revenue': 0,
         'wallet': 0,
+        'cluster_location': cluster_json['cluster']['location'],
     }
     client = use_cases.get_client()
     entity = use_cases.create_entity(client, project_id, 'Project')

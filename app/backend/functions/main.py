@@ -61,6 +61,7 @@ def create_project(request):
         pull_request['url'],
         pull_request['sha'],
         cost,
+        request_json['cluster'],
     )
     return project_id
 
