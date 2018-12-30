@@ -42,18 +42,31 @@ class ProjectsMenu extends React.Component {
         this.getProjects()
     }
     
+    isListItemSelected = (path) => {
+        return this.props.match.path === path
+    }
+    
     render() {
         return (
             <div className={this.props.classes.root}>
               <List component="nav">
                 <ListItem 
                     button
-                    selected={true}
+                    selected={this.isListItemSelected('/create')}
                     onClick={() => {
                         this.props.history.push('/create') 
                     }}
                 >
                   <ListItemText primary="Create"/> 
+                </ListItem>
+                <ListItem 
+                    button
+                    selected={this.isListItemSelected('/map')}
+                    onClick={() => {
+                        this.props.history.push('/map') 
+                    }}
+                >
+                  <ListItemText primary="Map"/> 
                 </ListItem>
                 {
                     this.state.project_list

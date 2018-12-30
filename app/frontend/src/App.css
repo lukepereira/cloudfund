@@ -5,9 +5,14 @@
 body,
 html {
     /*background-color: #f6f9fc;*/
+    height: 100%;
     font-size: 18px;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     /*background-image: linear-gradient(to bottom, #f6f9fc, #f9fafd, #fbfcfe, #fdfdfe, #ffffff);*/
     /*background-image: linear-gradient(to top, #f6f9fc, #f9fafd, #fbfcfe, #fdfdfe, #ffffff);*/
     /*background-image: linear-gradient(to right, #f6f9fc, #f9fafd, #fbfcfe, #fdfdfe, #ffffff);*/
+}
+
+#root {
+    height: 100%;
 }

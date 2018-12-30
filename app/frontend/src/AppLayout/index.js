@@ -112,6 +112,7 @@ class AppLayout extends React.Component {
 
 const styles = theme => ({
 	root: {
+		height: '100%',
 		flexGrow: 1,
 	},
 	appFrame: {
@@ -182,7 +183,7 @@ const styles = theme => ({
     	}),
 	},
 	'content-left': {
-        marginLeft: -drawerWidth,
+        // marginLeft: -drawerWidth,
 	},
 	'content-right': {
         marginRight: -drawerWidth,

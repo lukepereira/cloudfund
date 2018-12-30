@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react'
+import PropTypes from 'prop-types'
 import {
 	withStyles
-} from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+} from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
 
 const styles = theme => ({
 	container: {
@@ -21,24 +21,24 @@ const styles = theme => ({
 	menu: {
 		width: 200,
 	},
-});
+})
 
 class TextFields extends React.Component {
 	state = {
 		[this.props.name]: '',
-	};
+	}
 
 	handleChange = (event) => {
 		this.setState({
 			[this.props.name]: event.target.value,
-		});
-		this.props.onChange(event)
-	};
+		})
+		this.props.onChange && this.props.onChange(event)
+	}
 
 	render() {
 		const {
 			classes
-		} = this.props;
+		} = this.props
 
 		return ( 
             <form className={classes.container} noValidate autoComplete="off">
@@ -59,6 +59,6 @@ class TextFields extends React.Component {
 
 TextFields.propTypes = {
 	classes: PropTypes.object.isRequired,
-};
+}
 
-export default withStyles(styles)(TextFields);
+export default withStyles(styles)(TextFields)

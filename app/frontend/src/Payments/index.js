@@ -150,15 +150,15 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
     getPaymentStatus = () => (
         this.props.project &&
         <div>
-                <div>
-                    {`Monthly Cost: $${this.props.project.predicted_cost.monthly_cost} USD`}
-                </div>
-                <div>
-                    {`Hourly Cost: $${this.props.project.predicted_cost.hourly_cost} USD`}
-                </div>
-                <div>
-                    {`Wallet: $${this.props.project.wallet}`}
-                </div>
+            <div>
+                {`Monthly Cost: $${this.props.project.predicted_cost.monthly_cost} USD`}
+            </div>
+            <div>
+                {`Hourly Cost: $${this.props.project.predicted_cost.hourly_cost} USD`}
+            </div>
+            <div>
+                {`Wallet: $${this.props.project.wallet}`}
+            </div>
         </div>
     )
     
