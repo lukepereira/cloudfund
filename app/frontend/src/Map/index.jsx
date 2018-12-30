@@ -42,7 +42,7 @@ class Map extends Component {
             width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
             height = w.innerHeight|| documentElement.clientHeight|| body.clientHeight
         
-        this.setState({width, height})
+        this.setState({width, height })
         this.onViewportChange({})
     }
     
@@ -60,7 +60,7 @@ class Map extends Component {
             height: this.getHeight(),
             width: this.getWidth(),
             transitionInterpolator: new FlyToInterpolator(),
-            transitionDuration: 3000,
+            transitionDuration: 1500,
             ...updatedViewport,
         }
         this.setState({viewport})
@@ -70,7 +70,7 @@ class Map extends Component {
         this.onViewportChange({
             latitude: REGIONS[selectedRegion].latitude,
             longitude: REGIONS[selectedRegion].longitude,
-            zoom: 6.5,
+            zoom: 3.487,
             pitch: 70,
         })
         this.setState({selectedRegion})

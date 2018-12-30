@@ -1,4 +1,4 @@
-import { actionTypes as getProjectsActions } from '../actions/getProjects'
+import {  getProjectsActionTypes } from '../actions/projectActions'
 
 const initialProjectReducerState = {
     loading: false,
@@ -7,17 +7,20 @@ const initialProjectReducerState = {
 
 export default (state=initialProjectReducerState, action) => {
     switch (action.type) {
-        case getProjectsActions.GET_PROJECTS_REQUESTED:
+        case getProjectsActionTypes.GET_PROJECTS_REQUESTED:
             return {
+                ...state,
                 loading: true,
             }
-        case getProjectsActions.GET_PROJECTS_SUCCEEDED:
+        case getProjectsActionTypes.GET_PROJECTS_SUCCEEDED:
             return {
+                ...state,
                 loading: false,
                 projects_list: action.payload.projects_list,
             }
-        case getProjectsActions.GET_PROJECTS_FAILED:
+        case getProjectsActionTypes.GET_PROJECTS_FAILED:
             return {
+                ...state,
                 loading: false,
                 error: action.payload.error,
             }

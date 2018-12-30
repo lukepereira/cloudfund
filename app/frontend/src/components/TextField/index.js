@@ -24,14 +24,7 @@ const styles = theme => ({
 })
 
 class TextFields extends React.Component {
-	state = {
-		[this.props.name]: '',
-	}
-
 	handleChange = (event) => {
-		this.setState({
-			[this.props.name]: event.target.value,
-		})
 		this.props.onChange && this.props.onChange(event)
 	}
 
@@ -48,7 +41,7 @@ class TextFields extends React.Component {
                 placeholder={this.props.placeholder}
 				type={this.props.type}
                 className={classes.textField}
-                value={this.state[this.props.name]}
+                value={this.props.value}
                 onChange={this.handleChange}
                 margin="normal"
               />

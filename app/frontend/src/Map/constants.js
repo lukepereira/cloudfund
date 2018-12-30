@@ -6,8 +6,6 @@ export const INITIAL_VIEWPORT = {
     // "pitch": 51.55749109350457,
     // "altitude": 1.5,
     
-    width: 0,
-    height: 0,
     altitude: 1.5,
     bearing: -0.15789473684210503,
     latitude: 22.250222261394562,

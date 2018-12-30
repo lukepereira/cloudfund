@@ -24,12 +24,8 @@ const styles = theme => ({
 });
 
 class SimpleSelect extends React.Component {
-  state = {
-    [this.props.name]: '',
-  };
-
   handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.props.onChange && this.props.onChange(event)
   };
 
   render() {
@@ -45,7 +41,7 @@ class SimpleSelect extends React.Component {
                 <InputLabel>{this.props.inputLabel}</InputLabel>
             }
           <Select
-            value={this.state[this.props.name]}
+            value={this.props.value}
             onChange={this.handleChange}
             name={this.props.name}
             className={classes.selectEmpty}

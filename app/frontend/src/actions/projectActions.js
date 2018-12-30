@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const actionTypes = Object.freeze({
+export const getProjectsActionTypes = Object.freeze({
     GET_PROJECTS_REQUESTED: 'GET_PROJECTS_REQUESTED',
     GET_PROJECTS_SUCCEEDED: 'GET_PROJECTS_SUCCEEDED',
     GET_PROJECTS_FAILED: 'GET_PROJECTS_FAILED',
@@ -8,7 +8,7 @@ export const actionTypes = Object.freeze({
 
 export const getProjects = () => 
     dispatch => {
-        dispatch({type: actionTypes.GET_PROJECTS_REQUESTED})
+        dispatch({type: getProjectsActionTypes.GET_PROJECTS_REQUESTED})
         
         const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_projects'    
         const config = { 
@@ -24,7 +24,7 @@ export const getProjects = () =>
         )
         .then((response) => {
             dispatch({
-                type: actionTypes.GET_PROJECTS_SUCCEEDED,
+                type: getProjectsActionTypes.GET_PROJECTS_SUCCEEDED,
                 payload: {
                     projects_list: response.data
                 }
@@ -32,11 +32,27 @@ export const getProjects = () =>
         })
         .catch((error) => {
             dispatch({
-                type: actionTypes.GET_PROJECTS_FAILED,
+                type: getProjectsActionTypes.GET_PROJECTS_FAILED,
                 payload: {
                     error
                 }
             })
         })
-        
+    }
+
+
+
+export const createProjectFormUpdateActionTypes = Object.freeze({
+    CREATE_PROJECT_FORM_UPDATED: 'CREATE_PROJECT_FORM_UPDATED',
+ })
+
+export const createProjectFormUpdate = (field, value) => 
+    dispatch => {
+        dispatch({
+            type: createProjectFormUpdateActionTypes.CREATE_PROJECT_FORM_UPDATED,
+            payload: {
+                field,
+                value,
+            }
+        })
     }

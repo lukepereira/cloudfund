@@ -1,10 +1,12 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import axios from 'axios'
 import { CLUSTER_FORMS, REGIONS, MACHINE_TYPES } from './constants'
 import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
 import SimpleSelect from '../components/SimpleSelect'
 import TextField from '../components/TextField'
+import { createProjectFormUpdate } from '../actions/projectActions'
 
 import './CreateProject.css'
 
@@ -23,6 +25,10 @@ class CreateProject extends React.Component {
             },
         }
     }    
+
+    handleFormUpdate = (fieldName, value) => {
+        this.props.createProjectFormUpdate(fieldName, value)
+    } 
 
     handleName = (event) => this.setState({projectName: event.target.value})
     
@@ -134,29 +140,29 @@ class CreateProject extends React.Component {
     
     getClusterTemplateForm = () => (
         <div>
-            <TextField
-                name={'name'}
-                label={'Cluster Name'}
-                placeholder={''} 
-            />
-            
             <SimpleSelect
                 name={'region'}
                 placeholder={'Location type is permanent'}
                 inputLabel={'Region'}
                 options={REGIONS}
+                value={this.props.formState.region}
+                onChange={(event) => {this.handleFormUpdate(event.target.name, event.target.value)} }
             />
             
             <TextField
-                name={'number_of_nodes'}
+                name={'nodeCount'}
                 label={'Number of Nodes'}
                 type={'number'}
+                value={this.props.formState.nodeCount}
+                onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
             />
 
             <SimpleSelect
-                name={'machine_type'}
+                name={'machineType'}
                 inputLabel={'Machine Type'}
                 options={MACHINE_TYPES}
+                value={this.props.formState.machineType}
+                onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
             />
         </div>
     )
@@ -177,6 +183,7 @@ class CreateProject extends React.Component {
     )
     
     render() {
+        console.log("^^^^^", this.props)
         return (
             <div className="CreateProject">
                 <div>
@@ -188,7 +195,7 @@ class CreateProject extends React.Component {
                         name={'project_name'}
                         label={'Project Name'}
                         placeholder={''}
-                        onChange={this.handleName}
+                        onChange={(event) => this.handleFormUpdate('projectName', event.target.value)}
                     />
                     
                     <SimpleListMenu
@@ -228,4 +235,14 @@ class CreateProject extends React.Component {
     }
 }
 
-export default withRouter(CreateProject)
+const mapStateToProps = state => ({
+    formState: state.createProjectReducer.formState
+})
+
+const mapDispatchToProps = dispatch => ({
+    createProjectFormUpdate: (field, value) => dispatch(createProjectFormUpdate(field, value))
+})
+
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(CreateProject)
+)

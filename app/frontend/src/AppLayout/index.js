@@ -12,7 +12,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
-import { getProjects } from '../actions/getProjects'
+import { getProjects } from '../actions/projectActions'
 
 
 const drawerWidth = 240
