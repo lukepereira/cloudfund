@@ -1,94 +1,76 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import axios from 'axios'
 import { withRouter } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 
 class ProjectsMenu extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            project_list: []
-        }
-        this.getProjects = this.getProjects.bind(this)
-    }
-    
-    getProjects = () => {
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_projects'    
-        const config = { 
-            headers: {  
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }
-        }
-        axios.post(
-            post_url,
-            {},
-            config
-        )
-        .then((response) => {
-            console.log(response.data)
-            this.setState({project_list: response.data})
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-    }
-    
-    componentDidMount = () => {
-        this.getProjects()
-    }
     
     isListItemSelected = (path) => {
-        return this.props.match.path === path
+        return this.props.match.path === path ||
+            (this.props.match.path === '/' && path === '/map') 
     }
     
     render() {
         return (
             <div className={this.props.classes.root}>
-              <List component="nav">
-                <ListItem 
-                    button
-                    selected={this.isListItemSelected('/create')}
-                    onClick={() => {
-                        this.props.history.push('/create') 
-                    }}
-                >
-                  <ListItemText primary="Create"/> 
-                </ListItem>
-                <ListItem 
-                    button
-                    selected={this.isListItemSelected('/map')}
-                    onClick={() => {
-                        this.props.history.push('/map') 
-                    }}
-                >
-                  <ListItemText primary="Map"/> 
-                </ListItem>
-                {
-                    this.state.project_list
-                    && this.state.project_list.map( (project, i) => (
-                        <ListItem
-                            key={project.project_id}
-                            button 
-                            component="a" 
-                            onClick={() => {
-                                this.props.history.push(`project/${project.project_id}`) 
-                            }}
+                <List component="nav">
+                    <ListItem 
+                        button
+                        selected={this.isListItemSelected('/map')}
+                        onClick={() => {
+                            this.props.history.push('/map') 
+                        }}
+                    >
+                        <ListItemText primary="Map"/> 
+                    </ListItem>
+                    <ListItem 
+                        button
+                        selected={this.isListItemSelected('/create')}
+                        onClick={() => {
+                            this.props.history.push('/create') 
+                        }}
                         >
-                          <ListItemText primary={`${project.project_name}`} />
-                      </ListItem>
+                        <ListItemText primary="Create"/> 
+                    </ListItem>
+                    
+                    <ExpansionPanel>
+                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography className={this.props.classes.heading}>All Projects</Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails className={this.props.classes.expansionContainer}>
+                            {
+                                this.props.projects_list
+                                && this.props.projects_list.map( (project, i) => (
+                                    <ListItem
+                                        key={project.project_id}
+                                        button 
+                                        component="a" 
+                                        onClick={() => {
+                                            this.props.history.push(`project/${project.project_id}`) 
+                                        }}
+                                    >
+                                        <ListItemText primary={`${project.project_name}`} />
+                                    </ListItem>
+                                ))
+                            }
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                    
 
-                    ))
-                }
-              </List>
+                </List>
             </div>
         )
     }
-    
 }
 
 const styles = theme => ({
@@ -97,10 +79,23 @@ const styles = theme => ({
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+  expansionContainer: {
+      padding: '8px 0',
+  }
 })
 
 ProjectsMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withRouter(withStyles(styles)(ProjectsMenu))
+const mapStateToProps = state => ({
+    projects_list: state.projectsReducer.projects_list
+})
+
+export default withRouter(withStyles(styles)(
+    connect(mapStateToProps) (ProjectsMenu)
+))

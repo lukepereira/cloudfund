@@ -1,15 +1,37 @@
 .mapContainer{
     width: 100%;
-    height: 100%;
     display: flex;
-    justify-content: center;
+    /*justify-content: center;*/
 }
-
+.PopupTopSpace {
+    height: 8px;
+}
+.PopupBottomSpace {
+    height: 4px;
+}
 .PopupText {
     font-size: 10px;
     display: flex;
     flex-direction: column;
 }
+.PopupTextTitle {
+    font-weight: bold;
+}
+.PopupTextValue {
+    margin-left: 4px;
+}
 .PopupTextRow {
     display: flex;
+}
+.projectLink{
+    cursor: pointer;
+    width: min-content;
+}
+.projectLink {
+    cursor: pointer;
+    width: max-content;
+    opacity: 1;
+}
+.projectLink:hover {
+    opacity: 0.8;
 }

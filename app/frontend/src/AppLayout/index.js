@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
@@ -11,12 +12,19 @@ import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
+import { getProjects } from '../actions/getProjects'
+
+
 const drawerWidth = 240
 
 class AppLayout extends React.Component {
 	state = {
     	open: true,
     	anchor: 'left',
+	}
+	
+	componentDidMount = () => {
+		this.props.getProjects()
 	}
 
 	handleDrawerOpen = () => {
@@ -169,19 +177,20 @@ const styles = theme => ({
     	display: 'flex',
     	alignItems: 'center',
     	justifyContent: 'flex-end',
-    	padding: '0 8px',
+    	// padding: '0 8px',
     	...theme.mixins.toolbar,
 	},
 	content: {
     	flexGrow: 1,
     	// backgroundColor: theme.palette.background.default,
 		
-    	padding: theme.spacing.unit * 3,
+    	padding: 0, //theme.spacing.unit * 3,
     	transition: theme.transitions.create('margin', {
     		easing: theme.transitions.easing.sharp,
     		duration: theme.transitions.duration.leavingScreen,
     	}),
 	},
+
 	'content-left': {
         // marginLeft: -drawerWidth,
 	},
@@ -202,10 +211,19 @@ const styles = theme => ({
 	},
 })
 
-
 AppLayout.propTypes = {
 	classes: PropTypes.object.isRequired,
 	theme: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles, { withTheme: true })(AppLayout)
+const mapStateToProps = state => ({
+    ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+    getProjects: () => dispatch(getProjects())
+})
+
+export default withStyles(styles, { withTheme: true })(
+	connect(mapStateToProps, mapDispatchToProps)(AppLayout)
+)

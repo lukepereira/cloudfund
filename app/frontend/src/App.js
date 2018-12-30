@@ -40,7 +40,7 @@ const ProjectLayout = () => {
 
 const App = () => (
     <Switch>
-        <Route exact path='/' component={ProjectsLayout}/>
+        <Route exact path='/' component={MapLayout}/>
         <Route path='/create' component={ProjectsLayout}/>
         <Route path='/project/:project_id' component={ProjectLayout}/>
         <Route path='/map' component={MapLayout} />
