@@ -1,0 +1,37 @@
+ ---
+ apiVersion: "extensions/v1beta1"
+ kind: "Deployment"
+ metadata:
+   name: "citizenserver"
+   namespace: "default"
+   labels:
+     app: "citizenserver"
+ spec:
+   replicas: 3
+   selector:
+     matchLabels:
+       app: "citizenserver"
+   template:
+     metadata:
+       labels:
+         app: "citizenserver"
+     spec:
+       containers:
+       - name: "citizenserver"
+         image: "docker.io/lukepereira/citizenserver:v1"
+ ---
+ apiVersion: "v1"
+ kind: "Service"
+ metadata:
+   name: "citizenserver-service"
+   namespace: "default"
+   labels:
+     app: "citizenserver"
+ spec:
+   ports:
+   - protocol: "TCP"
+     port: 80
+   selector:
+     app: "citizenserver"
+   type: "LoadBalancer"
+   loadBalancerIP: ""
