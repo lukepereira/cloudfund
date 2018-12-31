@@ -14,14 +14,13 @@ const styles = theme => ({
     border: 'none',
   },
   formControl: {
-    margin: theme.spacing.unit,
     minWidth: 120,
     width: '100%',
   },
   selectEmpty: {
     marginTop: theme.spacing.unit * 2,
   },
-});
+})
 
 class SimpleSelect extends React.Component {
   handleChange = event => {
@@ -41,7 +40,7 @@ class SimpleSelect extends React.Component {
                 <InputLabel>{this.props.inputLabel}</InputLabel>
             }
           <Select
-            value={this.props.value}
+            value={this.props.value || ''}
             onChange={this.handleChange}
             name={this.props.name}
             className={classes.selectEmpty}

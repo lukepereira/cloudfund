@@ -11,7 +11,6 @@ const styles = theme => ({
   root: {
     padding: '0 !important',
     width: '100%',
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
 })

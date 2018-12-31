@@ -1,12 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
-import { CLUSTER_FORMS, REGIONS, MACHINE_TYPES } from './constants'
+import { CLUSTER_FORMS, CLUSTER_LOCATION_TYPES, REGIONS, MACHINE_TYPES, ZONES } from './constants'
 import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
 import SimpleSelect from '../components/SimpleSelect'
 import TextField from '../components/TextField'
 import { createProjectFormUpdate } from '../actions/projectActions'
+import { formatDollar } from '../helpers'
 
 import './CreateProject.css'
 
@@ -14,32 +15,35 @@ class CreateProject extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            clusterForm: CLUSTER_FORMS.TEMPLATE_FORM,
             projectName: '',
             projectURL: '',
             clusterFile: '',
             deploymentFile: '',
-            cost: {
-                monthly_cost: 0,
-                hourly_cost: 0,
-            },
+            cost: null,
         }
     }    
+
+    componentWillReceiveProps = (nextProps) => {
+        if (
+            this.props.formState.location !== nextProps.formState.location
+            || this.props.formState.machineType !== nextProps.formState.machineType
+            || this.props.formState.nodeCount !== nextProps.formState.nodeCount
+        ){
+            this.getPredictedCostFromTemplate(nextProps)
+        }
+        
+    }
 
     handleFormUpdate = (fieldName, value) => {
         this.props.createProjectFormUpdate(fieldName, value)
     } 
-
-    handleName = (event) => this.setState({projectName: event.target.value})
-    
-    handleRepository = (event) => this.setState({projectURL: event.target.value})    
 
     handleDeployment = (event) => this.setState({deploymentFile: event.target.value})
     
     handleCluster = (event) => {
         this.setState({clusterFile: event.target.value})
         if (this.isValidJson(event.target.value)) {
-            this.getPredictedCost(event.target.value)
+            this.getPredictedCostFromJSON(event.target.value)
         }
     }
     
@@ -58,7 +62,6 @@ class CreateProject extends React.Component {
             || !this.state.clusterFile
             || !this.state.deploymentFile
         ){
-            
             return
         }
         
@@ -95,7 +98,7 @@ class CreateProject extends React.Component {
         })
     }
     
-    getPredictedCost = (cluster_json) => {
+    getPredictedCostFromJSON = (cluster_json) => {
         if (!cluster_json){
             return 
         }
@@ -126,109 +129,197 @@ class CreateProject extends React.Component {
         })
     }
     
+    
+    getPredictedCostFromTemplate = (props) => {
+        console.log("^^^^", this.props.formState )
+        if (
+            !props.formState.location 
+            || !props.formState.machineType
+            || !props.formState.nodeCount
+        ){
+            return
+        }
+        
+        const nodeCount = props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL
+            ? parseInt(props.formState.nodeCount * 3)
+            : parseInt(props.formState.nodeCount)
+
+        const clusterJSON = {
+            cluster: {
+                location: props.formState.location,
+                nodePools: [ {
+                    initialNodeCount: nodeCount,
+                    config: {
+                        'machineType': props.formState.machineType,
+                    },
+                } ],
+            },
+        }
+        this.getPredictedCostFromJSON(JSON.stringify(clusterJSON))
+    }
+    
     getPredictedCostSection = () => (
         this.state.cost &&
         <div>
             <div>
-                {`Monthly Cost: $${this.state.cost.monthly_cost} USD`}
+                {`Monthly Cost: ${formatDollar(this.state.cost.monthly_cost)}`}
             </div>
             <div>
-                {`Hourly Cost: $${this.state.cost.hourly_cost} USD`}
+                {`Hourly Cost: ${formatDollar(this.state.cost.hourly_cost)}`}
             </div>
         </div>
     )
     
-    getClusterTemplateForm = () => (
-        <div>
+    getLocationField = () => {
+        if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL) {
+            return (
+                <SimpleSelect
+                    name={'location'}
+                    inputLabel={'Region'}
+                    options={REGIONS}
+                    value={this.props.formState.location}
+                    onChange={(event) => {this.handleFormUpdate(event.target.name, event.target.value)} }
+                />
+            )
+        }
+        return (
             <SimpleSelect
-                name={'region'}
-                placeholder={'Location type is permanent'}
-                inputLabel={'Region'}
-                options={REGIONS}
-                value={this.props.formState.region}
+                name={'location'}
+                inputLabel={'Zone'}
+                options={ZONES}
+                value={this.props.formState.location}
                 onChange={(event) => {this.handleFormUpdate(event.target.name, event.target.value)} }
             />
-            
+        )
+    }
+    
+    getNodeCountField = () => {
+        if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL) {
+            const nodeCount = this.props.formState.nodeCount && this.props.formState.nodeCount > 0 && this.props.formState.nodeCount * 3
+            return (
+                <div className={'flexField'}>
+                    <div className={'flexFieldColumn'}>
+                        <TextField
+                            name={'nodeCount'}
+                            label={'Number of Nodes (per zone)'}
+                            placeholder={''}
+                            type={'number'}
+                            value={this.props.formState.nodeCount}
+                            onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
+                        />
+                    </div>
+                    <div className={'flexFieldColumn'} style={{textAlign: 'center'}}> 
+                        { `Total (in all zones): ${nodeCount || 0}`}
+                    </div>
+                </div>
+            )
+        }
+        return (
             <TextField
                 name={'nodeCount'}
                 label={'Number of Nodes'}
+                placeholder={''}
                 type={'number'}
                 value={this.props.formState.nodeCount}
                 onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
-            />
-
-            <SimpleSelect
-                name={'machineType'}
-                inputLabel={'Machine Type'}
-                options={MACHINE_TYPES}
-                value={this.props.formState.machineType}
-                onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
-            />
+            />    
+        )
+    }
+    
+    getClusterTemplateForm = () => (
+        <div>
+            <div className={'fieldRow'}>
+                <SimpleListMenu
+                    options={[
+                        CLUSTER_LOCATION_TYPES.REGIONAL,
+                        CLUSTER_LOCATION_TYPES.ZONAL,
+                    ]}
+                    placeholder={'Location type is permanent'}
+                    value={this.props.formState.formType}
+                    onChange={(selectedOption) => this.handleFormUpdate('locationType', selectedOption) }
+                />
+            </div>
+            <div className={'fieldRow'}>
+                { this.getLocationField() }
+            </div>
+            
+            <div className={'fieldRow'}>
+                { this.getNodeCountField() }
+            </div>
+            
+            <div className={'fieldRow'}>
+                <SimpleSelect
+                    name={'machineType'}
+                    inputLabel={'Machine Type'}
+                    options={MACHINE_TYPES}
+                    value={this.props.formState.machineType}
+                    onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
+                />
+            </div>
         </div>
     )
     
     getClusterJSONForm = () => (
-        <label>
-            Cluster JSON
-            <textarea
-                data-gramm_editor='false'
-                placeholder=""
-                rows='12'
-                col='25'
-                onChange={this.handleCluster}
-                className={'full-width'}
-            >
-            </textarea>
-        </label>
+        <div className={'fieldRow'}>
+            <label>
+                Cluster JSON
+                <textarea
+                    data-gramm_editor='false'
+                    placeholder=""
+                    rows='12'
+                    col='25'
+                    onChange={this.handleCluster}
+                    className={'full-width'}
+                >
+                </textarea>
+            </label>
+        </div>
     )
     
     render() {
-        console.log("^^^^^", this.props)
         return (
             <div className="CreateProject">
-                <div>
+                <div className="container">
                     <h1>Create</h1>
                     
                     { this.getPredictedCostSection() }
                     
-                    <TextField
-                        name={'project_name'}
-                        label={'Project Name'}
-                        placeholder={''}
-                        onChange={(event) => this.handleFormUpdate('projectName', event.target.value)}
-                    />
-                    
-                    <SimpleListMenu
-                        options={[
-                            CLUSTER_FORMS.TEMPLATE_FORM ,
-                            CLUSTER_FORMS.JSON_FORM,
-                        ]}
-                        onChange={(selectedOption) => this.setState({'clusterForm': selectedOption})}
-                    />
+                    <div className={'fieldRow'}>
+                        <SimpleListMenu
+                            options={[
+                                CLUSTER_FORMS.TEMPLATE_FORM ,
+                                CLUSTER_FORMS.JSON_FORM,
+                            ]}
+                            value={this.props.formState.formType}
+                            onChange={(selectedOption) => this.handleFormUpdate('formType', selectedOption) }
+                        />
+                    </div>
                     
                     {
-                        this.state.clusterForm === CLUSTER_FORMS.TEMPLATE_FORM &&
+                        this.props.formState.formType === CLUSTER_FORMS.TEMPLATE_FORM &&
                         this.getClusterTemplateForm()
                     }
                     {
-                        this.state.clusterForm === CLUSTER_FORMS.JSON_FORM &&
+                        this.props.formState.formType === CLUSTER_FORMS.JSON_FORM &&
                         this.getClusterJSONForm()
                     }
-                
-                    <label>
-                        Deployment YAML
-                        <textarea
-                            data-gramm_editor='false'
-                            placeholder=""
-                            rows='12'
-                            col='25'
-                            onChange={this.handleDeployment}
-                            className={'full-width'}
-                        >
-                        </textarea>
-                    </label>
-                    
-                    <button onClick={this.handleSubmit}>Create</button>
+                    <div className={'fieldRow deploymentTextArea'}>
+                        <label>
+                            Kubernetes Deployment YAML
+                            <textarea
+                                data-gramm_editor='false'
+                                placeholder=""
+                                rows='12'
+                                col='25'
+                                onChange={this.handleDeployment}
+                                className={'full-width'}
+                            >
+                            </textarea>
+                        </label>
+                    </div>
+                    <div className={'fieldRow'}>
+                        <button onClick={this.handleSubmit}>Create</button>
+                    </div>
                 </div>
             </div>
         )

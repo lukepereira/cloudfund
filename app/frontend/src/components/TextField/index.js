@@ -11,15 +11,13 @@ const styles = theme => ({
 		flexWrap: 'wrap',
 	},
 	textField: {
-		marginLeft: theme.spacing.unit,
-		marginRight: theme.spacing.unit,
-		width: 200,
+		width: '100%',
 	},
 	dense: {
 		marginTop: 19,
 	},
 	menu: {
-		width: 200,
+		width: '100%',
 	},
 })
 
@@ -41,7 +39,7 @@ class TextFields extends React.Component {
                 placeholder={this.props.placeholder}
 				type={this.props.type}
                 className={classes.textField}
-                value={this.props.value}
+                value={this.props.value || ''}
                 onChange={this.handleChange}
                 margin="normal"
               />

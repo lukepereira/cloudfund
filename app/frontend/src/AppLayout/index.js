@@ -97,7 +97,7 @@ class AppLayout extends React.Component {
 							color="inherit" 
 							noWrap
 						>
-	    					Citizen Server
+	    					citizen server
 	    				</Typography>
 	    			</Toolbar>
 	    			</AppBar>

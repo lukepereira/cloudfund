@@ -49,7 +49,7 @@ export default class CityPin extends PureComponent {
             >
                 <g>
                     <path d={this.getIcon()}/>
-                    <text x={size/2} y={size} fontFamily="Verdana" fontSize={size} fill="black"> {this.props.text} </text>
+                    <text x={size/1.8} y={size} fontFamily="Roboto" fontSize={size} fill="black"> {this.props.text} </text>
                 </g>
             </svg>
         );

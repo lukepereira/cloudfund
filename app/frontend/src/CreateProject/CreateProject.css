@@ -4,6 +4,12 @@
     box-sizing: border-box;
     padding: 0 10%;
 }
+.CreateProject .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /*align-items: center;*/
+}
 
 .CreateProject h1 {
     color: #32325d;
@@ -55,7 +61,6 @@
 .CreateProject textarea {
     display: block;
     margin: 10px 0 20px 0;
-    max-width: 500px;
     padding: 10px 14px;
     font-size: 0.8em;
     font-family: 'Source Code Pro', monospace;
@@ -74,8 +79,19 @@
     -webkit-transition: all 150ms ease;
     transition: all 150ms ease;
 }
-
-
+.fieldRow {
+    margin: 8px 0;
+}
 .full-width {
     width: 100%;
+}
+.flexField {
+    display: flex;
+    align-items: baseline;
+}
+.flexFieldColumn {
+    flex: 1;
+}
+.deploymentTextArea {
+    margin-top: 16px;
 }

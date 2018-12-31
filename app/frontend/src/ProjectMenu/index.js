@@ -17,7 +17,6 @@ class ProjectMenu extends React.Component {
     }
     
     render() {
-        console.log("^^^", this.props)
         return (
             <div className={this.props.classes.root}>
               <List component="nav">
@@ -26,7 +25,7 @@ class ProjectMenu extends React.Component {
                     onClick={() => {
                         this.props.history.push('/') 
                     }}>
-                    <ListItemText  primary="Projects"/>
+                    <ListItemText  primary="All Projects"/>
                 </ListItem>
                 <ListItem 
                     button
