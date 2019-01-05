@@ -1,0 +1,67 @@
+{
+    "cluster": {
+        "name": "54796a4eedaf46fa99fa84187253364d",
+        "masterAuth": {
+            "username": "admin",
+            "clientCertificateConfig": {
+                "issueClientCertificate": true
+            }
+        },
+        "loggingService": "logging.googleapis.com",
+        "monitoringService": "monitoring.googleapis.com",
+        "network": "projects/scenic-shift-130010/global/networks/default",
+        "addonsConfig": {
+            "httpLoadBalancing": {},
+            "kubernetesDashboard": {
+                "disabled": true
+            },
+            "istioConfig": {
+                "disabled": true
+            }
+        },
+        "subnetwork": "projects/scenic-shift-130010/regions/us-central1/subnetworks/default",
+        "nodePools": [
+            {
+                "name": "default-pool",
+                "config": {
+                    "machineType": "",
+                    "diskSizeGb": 0,
+                    "oauthScopes": [
+                        "https://www.googleapis.com/auth/devstorage.read_only",
+                        "https://www.googleapis.com/auth/logging.write",
+                        "https://www.googleapis.com/auth/monitoring",
+                        "https://www.googleapis.com/auth/servicecontrol",
+                        "https://www.googleapis.com/auth/service.management.readonly",
+                        "https://www.googleapis.com/auth/trace.append"
+                    ],
+                    "imageType": "COS",
+                    "diskType": "pd-standard",
+                    "labels": {
+                        "project_id": "54796a4eedaf46fa99fa84187253364d"
+                    }
+                },
+                "initialNodeCount": "1",
+                "autoscaling": {},
+                "management": {
+                    "autoUpgrade": true,
+                    "autoRepair": true
+                },
+                "version": "1.10.9-gke.5",
+                "machineType": "f1-micro",
+                "diskSizeGb": 100
+            }
+        ],
+        "networkPolicy": {},
+        "ipAllocationPolicy": {},
+        "masterAuthorizedNetworksConfig": {},
+        "privateClusterConfig": {},
+        "databaseEncryption": {
+            "state": "DECRYPTED"
+        },
+        "initialClusterVersion": "1.10.9-gke.5",
+        "location": "us-central1",
+        "resourceLabels": {
+            "project_id": "54796a4eedaf46fa99fa84187253364d"
+        }
+    }
+}
