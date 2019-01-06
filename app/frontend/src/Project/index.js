@@ -22,18 +22,6 @@ class Project extends React.Component {
                 display_name: 'Status',
             },
             {
-                display_content: formatDollar(this.props.project['revenue']),
-                display_name: 'Revenue',
-            },
-            {
-                display_content: formatDollar(this.props.project['cumulative_cost']),
-                display_name: 'Cumulative Cost',
-            },
-            {
-                display_content: formatDollar(this.props.project['wallet']),
-                display_name: 'Wallet',
-            },
-            {
                 display_content: formatDollar(this.props.project['predicted_cost']['monthly_cost']),
                 display_name: 'Predicted Monthly Cost'
             },
@@ -41,6 +29,19 @@ class Project extends React.Component {
                 display_content: formatDollar(this.props.project['predicted_cost']['hourly_cost']),
                 display_name: 'Predicted Hourly Cost'
             },
+            {
+                display_content: formatDollar(this.props.project['cumulative_cost']),
+                display_name: 'Cumulative Billed Cost',
+            },
+            {
+                display_content: formatDollar(this.props.project['revenue']),
+                display_name: 'Revenue',
+            },
+            {
+                display_content: formatDollar(this.props.project['wallet']),
+                display_name: 'Wallet',
+            },
+
         ]
         : []
         return (

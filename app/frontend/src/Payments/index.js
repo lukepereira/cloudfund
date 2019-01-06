@@ -107,11 +107,10 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                     Amount
                     <input 
                         placeholder="0 USD" 
-                        onChange={this.handleAmountChange}>
-                        
+                        onChange={this.handleAmountChange}
+                    >
                     </input>
                 </label>
-                
                 <label>
                     Card details
                     <CardElement
