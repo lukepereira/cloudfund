@@ -86,6 +86,5 @@ def get_costs_from_bigquery(
         big_query_table=big_query_table,
     )
     rows = use_cases.query_bigquery(QUERY)
-    print(rows)
     return rows
     

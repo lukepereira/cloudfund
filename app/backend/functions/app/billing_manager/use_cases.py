@@ -4,7 +4,7 @@ import pickle
 
 from bs4 import BeautifulSoup
 
-from . import config
+from . import constants
 
 
 def get_predicted_cost(resources, pricing_table):    
@@ -16,6 +16,10 @@ def get_predicted_cost(resources, pricing_table):
     
     for node_pool in resources:
         node_count = node_pool['initialNodeCount']
+
+        if get_location_type(node_pool) == constants.LOCATION_TYPES['REGIONAL']:
+            node_count = node_count * 3
+
         if (node_pool['autoscaling'] and node_pool['autoscaling']['enabled']):
             node_count = node_pool['autoscaling']['maxNodeCount']
         pricing_ref = parse_price_sections(node_pool, pricing_table)
@@ -29,6 +33,13 @@ def get_predicted_cost(resources, pricing_table):
         'monthly_cost': monthly_total,
     } 
 
+def get_location_type(node_pool):
+    location = node_pool['location']
+    if len(location.split('-')) == 2:
+        return constants.LOCATION_TYPES['REGIONAL']
+    else:
+        return constants.LOCATION_TYPES['ZONAL']
+    
 
 def parse_price_sections(resources, pricing_table):
     price_ref = {}
@@ -52,7 +63,7 @@ def parse_price_sections(resources, pricing_table):
         machine_type_section,
     )
     for section_type, section_content in zip_section_content:
-        print ( section_type, section_content)
+        print(section_type, section_content)
         if section_type == 'Price (USD)':
             price_ref['monthly-price'] = section_content[monthly_key]
             price_ref['hourly-price'] = section_content[hourly_key]
@@ -65,11 +76,11 @@ def parse_price_sections(resources, pricing_table):
 def get_region_acronym(location):
     location_split = location.split('-')
     if (len(location_split) == 3):
-        return config.REGION_LOCATION_TO_ACRONYM['{}-{}'.format(
+        return constants.REGION_LOCATION_TO_ACRONYM['{}-{}'.format(
             location_split[0],
             location_split[1],
         )]
-    return config.REGION_LOCATION_TO_ACRONYM[location]
+    return constants.REGION_LOCATION_TO_ACRONYM[location]
 
 
 def get_pricing_section(section_header, pricing_table=None):

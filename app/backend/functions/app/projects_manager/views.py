@@ -8,7 +8,6 @@ from . import use_cases
 def create_project_entity(
     project_id, 
     project_name,
-    project_url,
     pull_request_url, 
     pull_request_sha,
     cost,
@@ -18,7 +17,6 @@ def create_project_entity(
     project_info = {
         'project_id': project_id,
         'project_name': project_name,
-        'project_url': project_url,
         'status': 'pending_payment',
         'pull_request_url': pull_request_url,
         'sha': pull_request_sha,

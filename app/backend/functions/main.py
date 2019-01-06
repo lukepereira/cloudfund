@@ -17,6 +17,7 @@ from app.deployments_manager.views import (
     create_deployment_from_configuration,
     create_deployment_from_generator,
     enable_kubeless_on_cluster,
+    get_cluster_json,
     get_project_configurations_from_id,
     get_project_configurations_from_pr,
     stop_cluster_if_cost_exceeds_funds,
@@ -37,27 +38,29 @@ from app.projects_manager.views import (
 
 app = create_app('development')
 
-
 @app.route('/', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def create_project(request):
     request_json = request.get_json()
     project_id = uuid.uuid4().hex
-    
+    cluster = get_cluster_json(
+        project_id,
+        request_json['cluster'],
+    )
     pull_request = create_project_pull_request(
         app.config['GH_ACCESS_TOKEN'],
         app.config['GH_REPO_NAME'],
         project_id,
-        request_json['cluster'],
+        request_json['project_name'],
+        cluster,
         request_json['deployment'],
     )
     cost = predict_cost_from_cluster_json(
-        request_json['cluster'],
+        cluster,
     )
     project = create_project_entity(
         project_id,
         request_json['project_name'],
-        request_json['project_url'],
         pull_request['url'],
         pull_request['sha'],
         cost,
@@ -116,7 +119,7 @@ def get_project_configurations(request):
     )
     response = {
         'cluster': cluster,
-        'deployment': deployment,
+        'deployment': list(deployment),
     }
     return jsonify(response)
 
@@ -143,7 +146,7 @@ def handle_charge(request):
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def handle_deployment_webhook(request):
     request_json = request.get_json()
-    if request_json['action'] == 'closed': #and request_json['pull_request']['merged'] == True:
+    if request_json['action'] == 'closed' and request_json['pull_request']['merged'] == True:
         cluster, deployment_generator = get_project_configurations_from_pr(
             app.config['GH_ACCESS_TOKEN'],
             app.config['GH_REPO_NAME'],
@@ -190,8 +193,6 @@ def handle_billing_pub_sub(request, context):
             app.config['GOOGLE_PROJECT_ID'],
             projects['to_stop'],
         )
-        print(stopped_clusters)
-
     for project in projects['to_deploy']:
         if project['status'] != 'running':  # use const
             cluster, deployment_generator = get_project_configurations_from_id(

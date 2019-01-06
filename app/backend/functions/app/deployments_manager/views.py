@@ -1,10 +1,25 @@
 import json
 import yaml
 
+from . import constants
 from . import use_cases
 from ..github_manager.views import (
     get_project_configuration,
 )
+
+
+def get_cluster_json(project_id, cluster):
+    # cluster_json = json.loads()
+    if cluster['format'] == constants.CLUSTER_FORM_TYPES['JSON']:
+        return cluster
+    if cluster['format'] == constants.CLUSTER_FORM_TYPES['TEMPLATE']:
+        cluster_tempate_json = use_cases.get_cluster_json_from_template(
+            project_id=project_id,
+            cluster_template=cluster['content'],
+        )
+        cluster['content'] = json.dumps(cluster_tempate_json, indent=4) 
+        cluster['format'] = constants.CLUSTER_FORM_TYPES['JSON']
+        return cluster
 
 
 def get_resources_from_cluster(cluster):
@@ -124,8 +139,6 @@ def create_deployment_from_generator(
                 cluster=cluster,
                 service=deployment,
             )
-            print (service_response)
-            print (dir(service_response))
         else:
             deployment_response = use_cases.create_deployment(
                 api_instance=api_instance,

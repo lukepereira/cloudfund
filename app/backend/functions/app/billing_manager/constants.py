@@ -1,3 +1,8 @@
+LOCATION_TYPES = {
+    'REGIONAL': 'REGIONAL',
+    'ZONAL': 'ZONAL',
+} 
+
 REGION_LOCATION_TO_ACRONYM = {
     'us-central1': 'io',
     'us-west2': 'la',

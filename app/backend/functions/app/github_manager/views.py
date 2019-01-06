@@ -10,6 +10,7 @@ def create_project_pull_request(
     access_token,
     repo_name,
     project_id,
+    project_name,
     cluster,
     deployment,
 ):
@@ -31,18 +32,18 @@ def create_project_pull_request(
         'clusters',
     )
     pull_request = repo.create_pull(
-        title=use_cases.get_message(project_id, 'title'),
+        title=use_cases.get_message(project_name, 'title'),
         head=branch.ref,
         base='master',
         body=use_cases.get_message(project_id, 'body'),
     )
     use_cases.set_status(repo, pull_request.head.sha, project_id, 'pending')
     return { 
-        'url': pull_request.url,
+        'url': pull_request.html_url,
         'sha': pull_request.head.sha,
     }
 
-    
+
 def validate_cluster(project_id, cluster):
     cluster_json = json.loads(cluster['content'])
     
@@ -54,7 +55,11 @@ def validate_cluster(project_id, cluster):
         if 'labels' not in pool['config']:
             pool['config']['labels'] = {}
         pool['config']['labels']['project_id'] = project_id
-
+    
+    cluster_json['cluster']['name'] = 'pid-{project_id}'.format(
+        project_id=project_id
+    )
+    
     cluster['content'] = json.dumps(cluster_json, indent=4)
     return cluster    
 

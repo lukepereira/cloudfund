@@ -13,8 +13,8 @@ from google.cloud.container_v1 import ClusterManagerClient
 from kubernetes import client, config
 import requests
 
-from . import config
-
+from . import constants
+from ..billing_manager.constants import LOCATION_TYPES
 
 def find_values(id, json_repr):
     results = []
@@ -33,8 +33,26 @@ def get_resources_from_node_pool(node_pool):
             if field in node_pool['config']
             else node_pool.get(field, '')
         )
-        for field in config.CLUSTER_RESOURCE_FIELDS
+        for field in constants.CLUSTER_RESOURCE_FIELDS
     }
+
+
+def get_location_type(location):
+    if len(location.split('-')) == 2:
+        return LOCATION_TYPES['REGIONAL']
+    else:
+        return LOCATION_TYPES['ZONAL']
+
+
+def get_cluster_service(
+    zone,
+    version='v1beta1',
+):
+    service = build('container', version)
+    if get_location_type(zone) == LOCATION_TYPES['REGIONAL']:
+        return service.projects().locations().clusters()
+    if get_location_type(zone) == LOCATION_TYPES['ZONAL']:
+        return service.projects().zones().clusters()
 
 
 def get_cluster(
@@ -44,8 +62,10 @@ def get_cluster(
     version='v1beta1',
 ):
     try:
-        service = build('container', version)
-        cl = service.projects().zones().clusters()
+        cl = get_cluster_service(
+            zone,
+            version,
+        )
         response = cl.get(
             projectId=gcp_project,
             clusterId=cluster['cluster']['name'],
@@ -55,19 +75,57 @@ def get_cluster(
     except (urllib.error.HTTPError, Exception) as err:
         return None
 
+
+def get_cluster_json_from_template(
+    project_id,
+    cluster_template,
+    version='1.10.9-gke.5',
+):
+    cluster_json = constants.CLUSTER_TEMPLATE
+    cluster_json['cluster']['name'] = 'pid-{project_id}'.format(
+        project_id=project_id
+    )
+    cluster_json['cluster']['network'] = 'projects/scenic-shift-130010/global/networks/default'
+    cluster_json['cluster']['subnetwork'] = 'projects/scenic-shift-130010/regions/{region}/subnetworks/default'.format(
+        region=cluster_template['location']
+    )
+    cluster_json['cluster']['location'] = cluster_template['location']
+    cluster_json['cluster']['initialClusterVersion'] = version
+    
+    node_pool = constants.NODE_POOL_TEMPLATE
+    node_pool['config']['machineType'] = cluster_template['machineType']
+    node_pool['config']['diskSizeGb'] = constants.DEFAULT_BOOT_DISK_SIZE
+    node_pool['initialNodeCount'] = int(cluster_template['initialNodeCount'])
+    node_pool['version'] = version
+    cluster_json['cluster']['nodePools'].append(node_pool)
+    return cluster_json
+
+
 def create_cluster(
     gcp_project,
     zone,
     cluster,
     version='v1beta1',
 ):
-    service = build('container', version)
-    cl = service.projects().zones().clusters()
-    response = cl.create(
-        projectId=gcp_project,
-        zone=zone,
-        body=cluster,
-    ).execute()
+    cl = get_cluster_service(
+        zone,
+        version,
+    )
+    location_type = get_location_type(zone)
+    if location_type == LOCATION_TYPES['ZONAL']:
+        response = cl.create(
+            projectId=gcp_project,
+            zone=zone,
+            body=cluster,
+        ).execute()
+    if location_type == LOCATION_TYPES['REGIONAL']:
+        response = cl.create(
+            parent='projects/{project}/locations/{location}'.format(
+                project=gcp_project,
+                location=zone,
+            ),
+            body=cluster,
+        ).execute()
     return response
 
 
@@ -77,10 +135,12 @@ def scale_cluster(
     size,
     version='v1beta1',
 ):
-    service = build('container', version)
-    cl = service.projects().zones().clusters()
+    cl = get_cluster_service(
+        zone,
+        version,
+    )
     cluster_response = {}
-    
+
     cluster = get_cluster(
         gcp_project=gcp_project,
         zone=cluster['cluster']['location'],
@@ -92,7 +152,6 @@ def scale_cluster(
             clusterId=cluster['cluster']['name'],
             zone=cluster['cluster']['location'],
         ).execute()
-    # print(cluster_response)
     ## unresolved bug in GKE prevents scaling nodepools to 0
     ## https://stackoverflow.com/questions/44525692/google-cloud-deployment-manager-update-container-cluster
     
@@ -156,6 +215,7 @@ def get_k8_api(
         return client.AppsV1beta1()
     if client_version == 'ExtensionsV1beta1Api':
         return client.ExtensionsV1beta1Api()
+
 
 def sanitize_k8_object(k8_object):
     api = client.ApiClient()
