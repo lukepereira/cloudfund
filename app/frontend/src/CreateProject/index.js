@@ -15,8 +15,6 @@ class CreateProject extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            projectName: '',
-            projectURL: '',
             clusterFile: '',
             deploymentFile: '',
             cost: null,
@@ -27,7 +25,7 @@ class CreateProject extends React.Component {
         if (
             this.props.formState.location !== nextProps.formState.location
             || this.props.formState.machineType !== nextProps.formState.machineType
-            || this.props.formState.nodeCount !== nextProps.formState.nodeCount
+            || this.props.formState.initialNodeCount !== nextProps.formState.initialNodeCount
         ){
             this.getPredictedCostFromTemplate(nextProps)
         }
@@ -38,10 +36,10 @@ class CreateProject extends React.Component {
         this.props.createProjectFormUpdate(fieldName, value)
     } 
 
-    handleDeployment = (event) => this.setState({deploymentFile: event.target.value})
+    handleDeployment = (event) => this.handleFormUpdate('deploymentFile', event.target.value)
     
     handleCluster = (event) => {
-        this.setState({clusterFile: event.target.value})
+        this.handleFormUpdate('JSONclusterFile', event.target.value)
         if (this.isValidJson(event.target.value)) {
             this.getPredictedCostFromJSON(event.target.value)
         }
@@ -55,13 +53,53 @@ class CreateProject extends React.Component {
             return false;
         }
     }
+    
+    getCluster = () => {
+        if (this.props.formState.formType === CLUSTER_FORMS.JSON_FORM){
+            return {
+                format: 'json', 
+                content: this.props.formState.JSONClusterFile,
+            }
+        }
+        if (this.props.formState.formType === CLUSTER_FORMS.TEMPLATE_FORM) {
+            return {
+                format: 'template',
+                content: this.props.formState
+            }
+        }
+    }
+    
+    validateSubmit = () => {
+        if (
+            !this.props.formState.deploymentFile 
+            || !this.props.formState.projectName
+        ) {
+            return false
+        }
+        
+        if (
+            this.props.formState.formType === CLUSTER_FORMS.JSON_FORM
+            && !this.props.formState.JSONClusterFile
+        ) {
+            return false
+        }
+        
+        if (
+            this.props.formState.formType === CLUSTER_FORMS.TEMPLATE_FORM
+            && (
+                !this.props.formState.location 
+                || !this.props.formState.machineType
+                || !this.props.formState.initialNodeCount
+            )
+        ) {
+            return false
+        }
+        return true
+    }
+    
         
     handleSubmit = () => {
-        if (
-            !this.state.projectName 
-            || !this.state.clusterFile
-            || !this.state.deploymentFile
-        ){
+        if (!this.validateSubmit()){
             return
         }
         
@@ -75,15 +113,11 @@ class CreateProject extends React.Component {
         axios.post(
             post_url,
             {
-                project_name: this.state.projectName,
-                project_url: this.state.projectURL,
-                cluster: {
-                    format: 'json', 
-                    content: this.state.clusterFile,
-                },
+                project_name: this.props.formState.projectName,
+                cluster: this.getCluster(),
                 deployment: {
                     format: 'yaml', 
-                    content: this.state.deploymentFile,
+                    content: this.props.formState.deploymentFile,
                 },
             },
             config
@@ -131,24 +165,19 @@ class CreateProject extends React.Component {
     
     
     getPredictedCostFromTemplate = (props) => {
-        console.log("^^^^", this.props.formState )
         if (
             !props.formState.location 
             || !props.formState.machineType
-            || !props.formState.nodeCount
+            || !props.formState.initialNodeCount
         ){
             return
         }
-        
-        const nodeCount = props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL
-            ? parseInt(props.formState.nodeCount * 3)
-            : parseInt(props.formState.nodeCount)
 
         const clusterJSON = {
             cluster: {
                 location: props.formState.location,
                 nodePools: [ {
-                    initialNodeCount: nodeCount,
+                    initialNodeCount: parseInt(props.formState.initialNodeCount),
                     config: {
                         'machineType': props.formState.machineType,
                     },
@@ -195,32 +224,32 @@ class CreateProject extends React.Component {
     
     getNodeCountField = () => {
         if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL) {
-            const nodeCount = this.props.formState.nodeCount && this.props.formState.nodeCount > 0 && this.props.formState.nodeCount * 3
+            const totalNodeCount = this.props.formState.initialNodeCount && this.props.formState.initialNodeCount > 0 && this.props.formState.initialNodeCount * 3
             return (
                 <div className={'flexField'}>
                     <div className={'flexFieldColumn'}>
                         <TextField
-                            name={'nodeCount'}
+                            name={'initialNodeCount'}
                             label={'Number of Nodes (per zone)'}
                             placeholder={''}
                             type={'number'}
-                            value={this.props.formState.nodeCount}
+                            value={this.props.formState.initialNodeCount}
                             onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
                         />
                     </div>
                     <div className={'flexFieldColumn'} style={{textAlign: 'center'}}> 
-                        { `Total (in all zones): ${nodeCount || 0}`}
+                        { `Total (in all zones): ${totalNodeCount || 0}`}
                     </div>
                 </div>
             )
         }
         return (
             <TextField
-                name={'nodeCount'}
+                name={'initialNodeCount'}
                 label={'Number of Nodes'}
                 placeholder={''}
                 type={'number'}
-                value={this.props.formState.nodeCount}
+                value={this.props.formState.initialNodeCount}
                 onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
             />    
         )
@@ -285,6 +314,16 @@ class CreateProject extends React.Component {
                     { this.getPredictedCostSection() }
                     
                     <div className={'fieldRow'}>
+                        <TextField
+                            name={'projectName'}
+                            label={'Project Name'}
+                            placeholder={''}
+                            value={this.props.formState.projectName}
+                            onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
+                        />
+                    </div>
+                    
+                    <div className={'fieldRow'}>
                         <SimpleListMenu
                             options={[
                                 CLUSTER_FORMS.TEMPLATE_FORM ,
@@ -308,7 +347,7 @@ class CreateProject extends React.Component {
                             Kubernetes Deployment YAML
                             <textarea
                                 data-gramm_editor='false'
-                                placeholder=""
+                                placeholder=''
                                 rows='12'
                                 col='25'
                                 onChange={this.handleDeployment}

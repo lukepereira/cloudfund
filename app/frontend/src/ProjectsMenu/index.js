@@ -24,24 +24,6 @@ class ProjectsMenu extends React.Component {
         return (
             <div className={this.props.classes.root}>
                 <List component="nav">
-                    <ListItem 
-                        button
-                        selected={this.isListItemSelected('/map')}
-                        onClick={() => {
-                            this.props.history.push('/map') 
-                        }}
-                    >
-                        <ListItemText primary="Map"/> 
-                    </ListItem>
-                    <ListItem 
-                        button
-                        selected={this.isListItemSelected('/create')}
-                        onClick={() => {
-                            this.props.history.push('/create') 
-                        }}
-                        >
-                        <ListItemText primary="Create"/> 
-                    </ListItem>
                     
                     <ExpansionPanel>
                         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -66,7 +48,26 @@ class ProjectsMenu extends React.Component {
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                     
-
+                    <ListItem 
+                        button
+                        selected={this.isListItemSelected('/map')}
+                        onClick={() => {
+                            this.props.history.push('/map') 
+                        }}
+                    >
+                        <ListItemText primary="Map"/> 
+                    </ListItem>
+                    
+                    <ListItem 
+                        button
+                        selected={this.isListItemSelected('/create')}
+                        onClick={() => {
+                            this.props.history.push('/create') 
+                        }}
+                        >
+                        <ListItemText primary="Create"/> 
+                    </ListItem>
+                    
                 </List>
             </div>
         )
@@ -84,6 +85,8 @@ const styles = theme => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
   expansionContainer: {
+      display: 'flex',
+      flexDirection: 'column',
       padding: '8px 0',
   }
 })

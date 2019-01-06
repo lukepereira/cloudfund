@@ -1,5 +1,7 @@
 import React from 'react'
 import axios from 'axios'
+import YAML from 'json2yaml'
+
 import './Deployment.css'
 
 
@@ -39,7 +41,7 @@ class Deployment extends React.Component {
             console.log(response.data)
             console.log(response.data.cluster)
             const cluster = JSON.stringify(response.data.cluster, null, 2)
-            const deployment = response.data.deployment
+            const deployment = YAML.stringify(response.data.deployment)
             this.setState({cluster, deployment})
         })
         .catch((error) => {

@@ -5,6 +5,8 @@ import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import IconButton from '@material-ui/core/IconButton'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 
 class ProjectMenu extends React.Component {
     
@@ -20,13 +22,13 @@ class ProjectMenu extends React.Component {
         return (
             <div className={this.props.classes.root}>
               <List component="nav">
-                <ListItem
-                    button
-                    onClick={() => {
-                        this.props.history.push('/') 
-                    }}>
-                    <ListItemText  primary="All Projects"/>
-                </ListItem>
+                  <ListItem
+                      button
+                      onClick={() => {
+                          this.props.history.push('/') 
+                      }}>
+                      <ListItemText primary="All Projects"/>
+                  </ListItem>
                 <ListItem 
                     button
                     selected={this.isPageSelected('info')}
@@ -35,14 +37,6 @@ class ProjectMenu extends React.Component {
                     }} >
                     <ListItemText primary="Info" />
                 </ListItem>
-                <ListItem 
-                    button
-                    selected={this.isPageSelected('deployment')}
-                    onClick={() => {
-                        this.props.history.push(`${this.props.match.url}/deployment`) 
-                    }} >
-                    <ListItemText primary="Deployment" />
-                </ListItem>
                 <ListItem
                     button
                     selected={this.isPageSelected('payments')}
@@ -50,6 +44,14 @@ class ProjectMenu extends React.Component {
                         this.props.history.push(`${this.props.match.url}/payments`) 
                     }} >
                     <ListItemText primary="Payments" />
+                </ListItem>
+                <ListItem 
+                    button
+                    selected={this.isPageSelected('deployment')}
+                    onClick={() => {
+                        this.props.history.push(`${this.props.match.url}/deployment`) 
+                    }} >
+                    <ListItemText primary="Deployment" />
                 </ListItem>
             </List>
         </div>

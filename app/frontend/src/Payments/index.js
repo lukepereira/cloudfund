@@ -8,6 +8,7 @@ import {
     InjectedProps,
 } from 'react-stripe-elements'
 import './Payments.css'
+import { formatDollar } from '../helpers'
 
 class _CardForm extends React.Component<InjectedProps & {fontSize: string, project: object}> {
 
@@ -146,22 +147,22 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
             }
         })
     }
-    
+
     getPaymentStatus = () => (
         this.props.project &&
         <div>
             <div>
-                {`Monthly Cost: $${this.props.project.predicted_cost.monthly_cost} USD`}
+                {`Wallet: ${formatDollar(this.props.project.wallet)}`}
             </div>
             <div>
-                {`Hourly Cost: $${this.props.project.predicted_cost.hourly_cost} USD`}
+                {`Monthly Cost: ${formatDollar(this.props.project.predicted_cost.monthly_cost)}`}
             </div>
             <div>
-                {`Wallet: $${this.props.project.wallet}`}
+                {`Hourly Cost: ${formatDollar(this.props.project.predicted_cost.hourly_cost)}`}
             </div>
         </div>
     )
-    
+
 
     render() {
         const {elementFontSize} = this.state

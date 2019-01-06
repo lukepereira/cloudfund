@@ -60,7 +60,7 @@ class Map extends Component {
             height: this.getHeight(),
             width: this.getWidth(),
             transitionInterpolator: new FlyToInterpolator(),
-            transitionDuration: 1500,
+            transitionDuration: 1150,
             ...updatedViewport,
         }
         this.setState({viewport})
@@ -96,7 +96,8 @@ class Map extends Component {
                     latitude= {REGIONS[regionName].latitude}
                     longitude={REGIONS[regionName].longitude}
                  >
-                    <Pin 
+                    <Pin
+                        key={`pin-${index}`}
                         size={15}
                         text={projects && projects.length}
                         onClick={() => this.onPinClick(regionName)}
@@ -149,9 +150,10 @@ class Map extends Component {
     }
     
     getProjectLinks = (projects) => (
-        projects.map((project) => {
+        projects.map((project, i) => {
             return (
                 <div
+                    key={`project_${i}`}
                     className={'projectLink'}
                     onClick={() => this.props.history.push(`/project/${project.project_id}`)}
                 >

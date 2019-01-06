@@ -81,3 +81,19 @@
 .full-width {
     width: 100%;
 }
+.projectTableRow {
+    display:flex;
+    flex-direction: column;
+    padding: 8px 8px;
+    border: 1px solid #5eff8821;
+    margin: 14px 0;
+    background-color: #f3f3f34f;
+    box-shadow: 8px 5px 23px -8px rgba(0,0,0,0.1)
+}
+
+.projectTableKey {
+    
+}
+.projectTableValue {
+    font-weight: bold;
+}
