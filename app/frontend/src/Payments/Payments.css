@@ -1,3 +1,9 @@
+.Payments {
+    margin: 0 auto;
+    max-width: 800px;
+    box-sizing: border-box;
+    padding: 16px 10%;
+}
 .Payments h1 {
     color: #32325d;
     font-weight: 400;
@@ -6,12 +12,7 @@
     margin: 20px 0;
     padding: 0;
 }
-.Payments {
-    margin: 0 auto;
-    max-width: 800px;
-    box-sizing: border-box;
-    padding: 0 10%;
-}
+
 .Payments label {
     color: #6b7c93;
     font-weight: 300;
@@ -48,7 +49,7 @@
     color: #fff;
     cursor: pointer;
     background-color: #7795f8;
-    background-image: linear-gradient(to top, #22b09f, #00c5a2, #0bd99f, #36ec96, #5eff88);
+    background-image: linear-gradient(to top, #22b09f, #00c5a2, #0bd99f, #36ec96, #66ff88);
     transform: translateY(-1px);
     box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
 }
@@ -78,4 +79,16 @@
 
 .full-width {
     width: 100%;
+}
+
+.paymentStatusContainer{
+    height: 90px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 16px;
+    border: 1px solid #5eff8821;
+    background-color: #f3f3f34f;
+    box-shadow: 8px 5px 23px -6px rgba(0,0,0,0.1);
+    justify-content: space-around;
 }

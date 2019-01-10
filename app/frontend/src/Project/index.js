@@ -10,6 +10,10 @@ class Project extends React.Component {
                 display_name: 'Date Created'
             },
             {
+                display_content: this.props.project['status'],
+                display_name: 'Status',
+            },
+            {
                 display_content: this.props.project['project_id'],
                 display_name: 'Project ID', 
             },
@@ -17,10 +21,7 @@ class Project extends React.Component {
                 display_content: this.props.project['pull_request_url'],
                 display_name: 'Pull Request URL',
             },
-            {
-                display_content: this.props.project['status'],
-                display_name: 'Status',
-            },
+
             {
                 display_content: formatDollar(this.props.project['predicted_cost']['monthly_cost']),
                 display_name: 'Predicted Monthly Cost'

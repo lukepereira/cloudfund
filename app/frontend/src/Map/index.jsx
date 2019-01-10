@@ -77,9 +77,9 @@ class Map extends Component {
     }
     
     getProjectsByLocation = (location) => {
-        const region = location && location.split('-').slice(0, 2).join('-')
         return this.props.projects_list &&
             this.props.projects_list.filter((project) => {
+                const region = location && location.split('-').slice(0, 2).join('-')
                 return project.cluster_location.indexOf(location) > -1
             })
     }

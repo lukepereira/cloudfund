@@ -149,7 +149,7 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
 
     getPaymentStatus = () => (
         this.props.project &&
-        <div>
+        <div className={'paymentStatusContainer'}>
             <div>
                 {`Wallet: ${formatDollar(this.props.project.wallet)}`}
             </div>

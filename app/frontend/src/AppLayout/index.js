@@ -58,9 +58,7 @@ class AppLayout extends React.Component {
     			{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
     			</IconButton>
     		</div>
-			{/* <Divider /> */}
     		{ this.props.menuContent }
-    		{/* <List>{otherMailFolderListItems}</List> */}
     		</Drawer>
     	)
 
@@ -109,7 +107,9 @@ class AppLayout extends React.Component {
 		    			})}
 	    			>
 		    			<div className={classes.drawerHeader} />
-		    				{ this.props.bodyContent }
+						<div className={classes.bodyContent}>
+							{ this.props.bodyContent }
+						</div>
 	    			</main>
 	    			{after}
 	    		</div>
@@ -138,8 +138,10 @@ const styles = theme => ({
     		duration: theme.transitions.duration.leavingScreen,
     	}),
 		// backgroundColor: '#1a73e8', //'#000000fc',
-	    // backgroundImage: 'linear-gradient(to right top, #051937, #004d7a, #0089a5, #00c6a8, #66ff88)',
-	    backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #66ff88)',
+	    
+		// backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #66ff88)', // brighter right
+		// backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #87ff59)', // default
+		backgroundImage: 'linear-gradient(to right, #434863, #004d7a, #0089a5, #00c6a8, #87ff59)', // brighter left
 	    // backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
 	},
 	appBarShift: {

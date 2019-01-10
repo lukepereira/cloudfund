@@ -30,9 +30,9 @@ export const REGIONS = [
 ]
 
 export const ZONES = [
-    {val: 'us-east1-b', label: 'us-east1-b us-east1'},
-    {val: 'us-east1-c', label: 'us-east1-c us-east1'},
-    {val: 'us-east1-d', label: 'us-east1-d us-east1'},
+    {val: 'us-east1-b', label: 'us-east1-b (South Carolina)'},
+    {val: 'us-east1-c', label: 'us-east1-c (South Carolina)'},
+    {val: 'us-east1-d', label: 'us-east1-d (South Carolina)'},
     {val: 'us-east4-c', label: 'us-east4-c (Northern Virginia)'},
     {val: 'us-east4-b', label: 'us-east4-b (Northern Virginia)'},
     {val: 'us-east4-a', label: 'us-east4-a (Northern Virginia)'},

@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
 import SimpleSelect from '../components/SimpleSelect'
 import TextField from '../components/TextField'
-import { createProjectFormUpdate } from '../actions/projectActions'
+import { createProjectFormUpdate, getPredictedCost } from '../actions/projectActions'
 import { formatDollar } from '../helpers'
 
 import './CreateProject.css'
@@ -41,7 +41,7 @@ class CreateProject extends React.Component {
     handleCluster = (event) => {
         this.handleFormUpdate('JSONclusterFile', event.target.value)
         if (this.isValidJson(event.target.value)) {
-            this.getPredictedCostFromJSON(event.target.value)
+            this.props.getPredictedCost(event.target.value)
         }
     }
     
@@ -177,24 +177,24 @@ class CreateProject extends React.Component {
             cluster: {
                 location: props.formState.location,
                 nodePools: [ {
-                    initialNodeCount: parseInt(props.formState.initialNodeCount),
+                    initialNodeCount: parseInt(props.formState.initialNodeCount, 10),
                     config: {
                         'machineType': props.formState.machineType,
                     },
                 } ],
             },
         }
-        this.getPredictedCostFromJSON(JSON.stringify(clusterJSON))
+        this.props.getPredictedCost(JSON.stringify(clusterJSON))
     }
     
     getPredictedCostSection = () => (
-        this.state.cost &&
-        <div>
+        this.props.predictedCost &&
+        <div className={'costContainer'}>
             <div>
-                {`Monthly Cost: ${formatDollar(this.state.cost.monthly_cost)}`}
+                {`Monthly Cost: ${formatDollar(this.props.predictedCost.monthly_cost)}`}
             </div>
             <div>
-                {`Hourly Cost: ${formatDollar(this.state.cost.hourly_cost)}`}
+                {`Hourly Cost: ${formatDollar(this.props.predictedCost.hourly_cost)}`}
             </div>
         </div>
     )
@@ -366,11 +366,13 @@ class CreateProject extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    formState: state.createProjectReducer.formState
+    formState: state.createProjectReducer.formState,
+    predictedCost: state.createProjectReducer.predictedCost,
 })
 
 const mapDispatchToProps = dispatch => ({
-    createProjectFormUpdate: (field, value) => dispatch(createProjectFormUpdate(field, value))
+    createProjectFormUpdate: (field, value) => dispatch(createProjectFormUpdate(field, value)),
+    getPredictedCost: (cluster) => dispatch(getPredictedCost(cluster)),
 })
 
 export default withRouter(

@@ -2,7 +2,7 @@
     margin: 0 auto;
     max-width: 800px;
     box-sizing: border-box;
-    padding: 0 10%;
+    padding: 16px 10%;
 }
 .CreateProject .container {
     display: flex;
@@ -35,8 +35,8 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    background-color: #6772e5;
-    background-image: linear-gradient(to top, #00799d, #0091ad, #00a8b3, #00bfae, #03d49f);
+    background-color: #87ff59 ;
+     background-image: linear-gradient(to top, #00799d, #0091ad, #00a8b3, #00bfae, #03d49f);
     text-decoration: none;
     -webkit-transition: all 150ms ease;
     transition: all 150ms ease;
@@ -46,8 +46,8 @@
 .CreateProject button:hover {
     color: #fff;
     cursor: pointer;
-    background-color: #7795f8;
-    background-image: linear-gradient(to top, #22b09f, #00c5a2, #0bd99f, #36ec96, #5eff88);
+    background-color: #66ff88;
+     background-image: linear-gradient(to top, #22b09f, #00c5a2, #0bd99f, #36ec96, #66ff88); 
     transform: translateY(-1px);
     box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
 }
@@ -94,4 +94,15 @@
 }
 .deploymentTextArea {
     margin-top: 16px;
+}
+.costContainer {
+    height: 90px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 16px;
+    border: 1px solid #5eff8821;
+    background-color: #f3f3f34f;
+    box-shadow: 8px 5px 23px -6px rgba(0,0,0,0.1);
+    justify-content: space-around;
 }

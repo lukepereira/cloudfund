@@ -64,11 +64,11 @@ export const getPredictedCostActionTypes = Object.freeze({
     GET_PREDICTED_COST_FAILED: 'GET_PREDICTED_COST_FAILED',
 })    
 
-export const getPredictedCost = (cluster_json) => {
+export const getPredictedCost = (cluster_json) => 
     dispatch => {
-        dispatch({type: getProjectsActionTypes.GET_PROJECTS_REQUESTED})
+        dispatch({type: getPredictedCostActionTypes.GET_PREDICTED_COST_REQUESTED})
         
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_projects'    
+        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_predicted_cost_from_json'    
         const config = { 
             headers: {  
                 'Content-Type': 'application/json',
@@ -77,24 +77,30 @@ export const getPredictedCost = (cluster_json) => {
         }
         axios.post(
             post_url,
-            {},
+            {
+                cluster: {
+                    format: 'json', 
+                    content: cluster_json,
+                },
+            },
             config
         )
         .then((response) => {
             dispatch({
-                type: getProjectsActionTypes.GET_PROJECTS_SUCCEEDED,
+                type: getPredictedCostActionTypes.GET_PREDICTED_COST_SUCCEEDED,
                 payload: {
-                    projects_list: response.data
+                    cost: response.data,
+                    hourly_cost: response.data.hourly_cost,
+                    monthly_cost: response.data.monthly_cost
                 }
             })
         })
         .catch((error) => {
             dispatch({
-                type: getProjectsActionTypes.GET_PROJECTS_FAILED,
+                type: getPredictedCostActionTypes.GET_PREDICTED_COST_FAILED,
                 payload: {
                     error
                 }
             })
         })
     }
-}
