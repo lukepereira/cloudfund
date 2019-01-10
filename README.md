@@ -1,13 +1,19 @@
 # Cloudfound
-Cloudfound aims to support open-source initiatives by crowdfunding and maintaining their cloud resources using Stripe, Kubernetes, and Github.
+Cloudfound aims to support open-source and not-for-profit initiatives by crowdfunding and maintaining cloud resources and deployments using Stripe, Kubernetes, and Github.
+Ideal candidates would be services or microservices which can be used by many people and would benefit from decentralized funding and deployment review/versioning.
+
+Examples of use cases:
+- A web app created by a not-for-profit organization
+- A read-only database containing scientific or medical information
+- A server running any docker image
 
 # Overview
 ##### When a project is created:
 - A `project_id` is created
-- A pull request is opened containing a JSON cluster configuration file and a YAML Kubernetes deployment file.
+- A pull request is opened containing a JSON cluster configuration file and a YAML Kubernetes deployment file
 - A GitHub "payment" status is set to pending on the PR, preventing it from being merged
 - A monthly and hourly cost is predicted based on machine type, node count, and location
-- A project entity is created in Google Datastore containing project information
+- A project entity is created in Google Datastore containing the project's details
 
 ##### When a payment is submitted on a project's page:
 - A payment entity is created in Google Datastore containing a reference to the `project_id`, a unique `payment_id`, and `status` of `pending_deposit`
@@ -19,19 +25,20 @@ Cloudfound aims to support open-source initiatives by crowdfunding and maintaini
 
 ##### [TODO] If funds are not met after a month of fundraising:
 - Payments with status `pending_deposit` are refunded through Stripe and have their status updated to `refunded`
-- The project entity is deleted and it's PR is closed
+- The project entity is deleted and its PR is closed
 
 ##### When a project with a status of `pending_merge` is reviewed and merged:
 - A GitHub webhook will trigger the cluster described in the PR to be created
 - A `project_id` label is added to every node (VM instance) in the cluster
 - The project's status is updated to `pending_deployment`
 
-##### Billing data is exported hourly into Google Big Query where a pub sub event triggers a function:
+##### When billing data is exported hourly into Google Big Query:
+- A pub sub topic is triggered
 - A query is run on the exported billing data table to get all resources with `project_id` labels
 - All projects have their `cumulative_cost` updated
 - All projects have their `wallet` updated
-- If a billed project has a `wallet` less than it's predicted hourly cost:
-    - The project's cluster is scaled to 0 workers to prevent further expenses.
+- If a billed project has a `wallet` less than its predicted hourly cost:
+    - The project's cluster is scaled to 0 to prevent further expenses.
     - The project's status is updated to `stopped`
 - If a billed project has a `pending_deployment` status:
     - The project's Kubernetes deployment is run on the cluster 
@@ -62,12 +69,13 @@ Cloudfound aims to support open-source initiatives by crowdfunding and maintaini
 
 
 # Wallet and Costs
-```
+```js
 revenue = deposited + pending_deposit
 wallet = revenue - cumulative_cost
 ```
 
 # Roadmap
+[ ] Add Kubernetes resource limits 
 [ ] Support Kubeless functions for serverless functions
 [ ] Support cluster load balancer
 [ ] Support preemptible machines
