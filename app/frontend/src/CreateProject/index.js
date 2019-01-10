@@ -187,17 +187,20 @@ class CreateProject extends React.Component {
         this.props.getPredictedCost(JSON.stringify(clusterJSON))
     }
     
-    getPredictedCostSection = () => (
-        this.props.predictedCost &&
-        <div className={'costContainer'}>
-            <div>
-                {`Monthly Cost: ${formatDollar(this.props.predictedCost.monthly_cost)}`}
+    getPredictedCostSection = () => {
+        const monthlyCost = this.props.predictedCost ? formatDollar(this.props.predictedCost.monthly_cost) : 0
+        const hourlyCost = this.props.predictedCost ? formatDollar(this.props.predictedCost.hourly_cost) : 0
+        return(
+            <div className={'costContainer'}>
+                <div>
+                    {`Monthly Cost: ${monthlyCost}`}
+                </div>
+                <div>
+                    {`Hourly Cost: ${hourlyCost}`}
+                </div>
             </div>
-            <div>
-                {`Hourly Cost: ${formatDollar(this.props.predictedCost.hourly_cost)}`}
-            </div>
-        </div>
-    )
+        )
+    }
     
     getLocationField = () => {
         if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL) {
