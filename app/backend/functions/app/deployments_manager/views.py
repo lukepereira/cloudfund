@@ -130,11 +130,13 @@ def create_deployment_from_generator(
         zone=cluster['cluster']['location'],
         cluster_id=cluster['cluster']['name'],
     )
+    
     deployment_responses = []
     for deployment in deployment_generator:
         deployment_response = {}
+        
         if deployment['kind'] == 'Service':
-            service_response = create_service_from_configuration(
+            service_responåse = create_service_from_configuration(
                 gcp_project=gcp_project,
                 cluster=cluster,
                 service=deployment,

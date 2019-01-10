@@ -6,6 +6,7 @@ import json
 from os import path
 import urllib
 import yaml
+import inspect
 
 from apiclient.discovery import build
 from google.auth import compute_engine
@@ -49,9 +50,10 @@ def get_cluster_service(
     version='v1beta1',
 ):
     service = build('container', version)
-    if get_location_type(zone) == LOCATION_TYPES['REGIONAL']:
+    location_type = get_location_type(zone)
+    if location_type == LOCATION_TYPES['REGIONAL']:
         return service.projects().locations().clusters()
-    if get_location_type(zone) == LOCATION_TYPES['ZONAL']:
+    if location_type == LOCATION_TYPES['ZONAL']:
         return service.projects().zones().clusters()
 
 
@@ -66,13 +68,27 @@ def get_cluster(
             zone,
             version,
         )
-        response = cl.get(
-            projectId=gcp_project,
-            clusterId=cluster['cluster']['name'],
-            zone=zone,  
-        ).execute()
+        location_type = get_location_type(zone)
+        if location_type == LOCATION_TYPES['REGIONAL']:
+            name = 'projects/{gcp_project}/locations/{location}/clusters/{cluster_id}'.format(
+                gcp_project=gcp_project,
+                location=zone,
+                cluster_id=cluster['cluster']['name'],
+            )
+            response = cl.get(
+                name=str(name),
+                projectId=gcp_project,
+                clusterId=cluster['cluster']['name'],
+            ).execute()
+        if location_type == LOCATION_TYPES['ZONAL']:
+            response = cl.get(
+                projectId=gcp_project,
+                clusterId=cluster['cluster']['name'],
+                zone=zone,  
+            ).execute()
         return response
     except (urllib.error.HTTPError, Exception) as err:
+        print (err)
         return None
 
 
@@ -188,17 +204,34 @@ def get_k8_api(
     cluster_id,
     client_version='ExtensionsV1beta1Api'
 ):
+    # TODO: use service account instead of creating token with ClusterManagerClient
     credentials = compute_engine.Credentials()
     cluster_manager_client = ClusterManagerClient(
         credentials=credentials,
-    )
-    cluster = cluster_manager_client.get_cluster(
-        gcp_project,
-        zone,
-        cluster_id,
-    )
+    )    
+    
+    location_type = get_location_type(zone)
+    if location_type == LOCATION_TYPES['ZONAL']:
+        cluster = cluster_manager_client.get_cluster(
+            project_id=gcp_project,
+            zone=zone,
+            cluster_id=cluster_id
+        )
+    elif location_type == LOCATION_TYPES['REGIONAL']:
+        cluster = cluster_manager_client.get_cluster(
+            project_id=gcp_project,
+            cluster_id=cluster_id,
+            zone='',
+            name='projects/{gcp_project}/locations/{zone}/cluster/{cluster_id}'.format(
+                gcp_project=gcp_project,
+                zone=zone,
+                cluster_id=cluster_id,
+            )
+        )
+    
+
     configuration = client.Configuration()
-    configuration.host = "https://{endpoint}:443".format(
+    configuration.host = 'https://{endpoint}:443'.format(
         endpoint=cluster.endpoint,
     )
     configuration.verify_ssl = False

@@ -9,9 +9,11 @@ Flask-Cors==3.0.6
 futures==3.1.1
 google-api-core==1.5.0
 google-auth==1.5.1
-google-cloud-core==0.28.1
+google-cloud==0.34.0
+google-cloud-container==0.2.1
+google-cloud-core==0.29.1
 google-cloud-datastore==1.7.0
-googleapis-common-protos==1.5.3
+googleapis-common-protos==1.5.5
 grpcio==1.16.0
 idna==2.7
 ItsDangerous==1.0.0

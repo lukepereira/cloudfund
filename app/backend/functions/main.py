@@ -178,7 +178,11 @@ def handle_deployment_webhook(request):
 def handle_billing_pub_sub(request, context):
     '''
         Deploy: gcloud functions deploy handle_billing_pub_sub --runtime python37 --trigger-resource billing-notifications --trigger-event google.pubsub.topic.publish
+        Test : { "data": "ewogICJidWRnZXREaXNwbGF5TmFtZSI6ICJCaWxsaW5nIGV2ZW50IGxpc3RlbmVyIiwKICAiYWxlcnRUaHJlc2hvbGRFeGNlZWRlZCI6IDEuMCwKICAiY29zdEFtb3VudCI6IDIuODEs
+            CiAgImNvc3RJbnRlcnZhbFN0YXJ0IjogIjIwMTktMDEtMDFUMDg6MDA6MDBaIiwKICAiYnVkZ2V0QW1vdW50IjogMC4wLAogICJidWRnZXRBbW91bnRUeXBlIjogIlNQRUNJRklFRF9BTU9VTlQiLAogIC
+            JjdXJyZW5jeUNvZGUiOiAiQ0FEIgp9" }
     '''
+    
     if 'data' in request:
         raw_data = base64.b64decode(request['data']).decode('utf-8')
     
@@ -206,7 +210,7 @@ def handle_billing_pub_sub(request, context):
                 deployment_generator,
             )
             status_response = update_project_status(
-                request_json['pull_request']['head']['ref'], 
+                project['project_id'], 
                 'running',
             )
     
