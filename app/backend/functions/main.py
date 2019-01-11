@@ -208,6 +208,7 @@ def handle_billing_pub_sub(request, context):
                 app.config['GOOGLE_PROJECT_ID'],
                 cluster,
                 deployment_generator,
+                project['status'],
             )
             status_response = update_project_status(
                 project['project_id'], 

@@ -124,6 +124,7 @@ def create_deployment_from_generator(
     gcp_project,
     cluster,
     deployment_generator,
+    project_status,
 ):
     api_instance = use_cases.get_k8_api(
         gcp_project=gcp_project,
@@ -135,7 +136,7 @@ def create_deployment_from_generator(
     for deployment in deployment_generator:
         deployment_response = {}
         
-        if deployment['kind'] == 'Service':
+        if deployment['kind'] == 'Service' and project_status != 'running':
             service_responåse = create_service_from_configuration(
                 gcp_project=gcp_project,
                 cluster=cluster,

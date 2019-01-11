@@ -1,1 +1,2 @@
-pipenv install package && pipenv lock --requirements
+#pipenv install {package} 
+pipenv lock --requirements
