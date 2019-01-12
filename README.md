@@ -37,14 +37,15 @@ Examples of use cases:
 - A query is run on the exported billing data table to get all resources with `project_id` labels
 - All projects have their `cumulative_cost` updated
 - All projects have their `wallet` updated
-- If a billed project has a `wallet` less than its predicted hourly cost:
-    - The project's cluster is scaled to 0 to prevent further expenses.
-    - The project's status is updated to `stopped`
 - If a billed project has a `pending_deployment` status:
     - The project's Kubernetes deployment is run on the cluster 
     - A `project_id` label is added to any services described in the deployment file
     - [TODO] The project entity is updated with any external IPs created from the deployment
     - The project's status is updated to `running`
+- If a billed project has a `wallet` less than its predicted hourly cost:
+    - The project's cluster is scaled to 0 to prevent further expenses.
+    - The project's status is updated to `stopped`
+
 
 # Statuses
 | Project Status     |                                                                                                          |
@@ -75,11 +76,11 @@ wallet = revenue - cumulative_cost
 ```
 
 # Roadmap
-[ ] Add Kubernetes resource limits 
-[ ] Support Kubeless functions for serverless functions
-[ ] Support cluster load balancer
-[ ] Support preemptible machines
-[ ] Set up not-for-profit corporation and account
+- [ ] Add Kubernetes resource limits 
+- [ ] Support Kubeless functions for serverless functions
+- [ ] Support cluster load balancer
+- [ ] Support preemptible machines
+- [ ] Set up not-for-profit corporation and account
 
 # Challenges
 Prevent clusters being misused to mine cryptocurrencies anonymously
