@@ -33,13 +33,15 @@ class TextFields extends React.Component {
 
 		return ( 
             <form className={classes.container} noValidate autoComplete="off">
-              <TextField          
+              <TextField
+			    error={this.props.error}    
                 name={this.props.name}
                 label={this.props.label}
                 placeholder={this.props.placeholder}
 				type={this.props.type}
                 className={classes.textField}
                 value={this.props.value || ''}
+				helperText={this.props.helperText}
                 onChange={this.handleChange}
                 margin="normal"
               />

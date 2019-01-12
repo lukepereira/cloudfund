@@ -94,6 +94,14 @@ class CreateProject extends React.Component {
         ) {
             return false
         }
+        
+        if ( 
+            this.props.formState.machineType === 'f1-micro' 
+            && this.props.formState.initialNodeCount < 3
+        ){
+            return false
+        }
+        
         return true
     }
     
@@ -246,16 +254,24 @@ class CreateProject extends React.Component {
                 </div>
             )
         }
-        return (
-            <TextField
-                name={'initialNodeCount'}
-                label={'Number of Nodes'}
-                placeholder={''}
-                type={'number'}
-                value={this.props.formState.initialNodeCount}
-                onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
-            />    
-        )
+        if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.ZONAL) {
+            const error = this.props.formState.machineType === 'f1-micro' && this.props.formState.initialNodeCount < 3
+            const helperText = error 
+                ? 'The total number of nodes in the cluster must be at least 3 when all the node pools have machine type "f1-micro":' 
+                : ''
+            return (
+                <TextField
+                    error={error}
+                    name={'initialNodeCount'}
+                    label={'Number of Nodes'}
+                    placeholder={''}
+                    type={'number'}
+                    helperText={helperText}
+                    value={this.props.formState.initialNodeCount}
+                    onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
+                />    
+            )
+        }
     }
     
     getClusterTemplateForm = () => (
@@ -325,8 +341,8 @@ class CreateProject extends React.Component {
                             onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
                         />
                     </div>
-                    
-                    <div className={'fieldRow'}>
+
+                    {/* <div className={'fieldRow'}>
                         <SimpleListMenu
                             options={[
                                 CLUSTER_FORMS.TEMPLATE_FORM ,
@@ -335,7 +351,7 @@ class CreateProject extends React.Component {
                             value={this.props.formState.formType}
                             onChange={(selectedOption) => this.handleFormUpdate('formType', selectedOption) }
                         />
-                    </div>
+                    </div> */}
                     
                     {
                         this.props.formState.formType === CLUSTER_FORMS.TEMPLATE_FORM &&
