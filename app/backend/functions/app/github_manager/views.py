@@ -73,6 +73,7 @@ def get_project_configuration(
 ):
     g = Github(access_token)
     repo = g.get_repo(repo_name)
+    print (access_token, repo_name, repo)
     configuration_file = use_cases.get_configuration_file(
         repo,
         ref,

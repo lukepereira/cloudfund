@@ -151,22 +151,26 @@ def scale_cluster(
     size,
     version='v1beta1',
 ):
-    cl = get_cluster_service(
-        zone,
-        version,
-    )
     cluster_response = {}
-
-    cluster = get_cluster(
+    cluster_exists = get_cluster(
         gcp_project=gcp_project,
         zone=cluster['cluster']['location'],
-        cluster_id=cluster['cluster']['name'],
+        cluster=cluster,
     )
-    if cluster:
+    if cluster_exists:
+        cl = get_cluster_service(
+            zone=cluster['cluster']['location'],
+            version=version,
+        )
         cluster_response = cl.delete(
             projectId=gcp_project,
             clusterId=cluster['cluster']['name'],
-            zone=cluster['cluster']['location'],
+            zone='',
+            name='projects/{gcp_project}/locations/{zone}/clusters/{cluster_id}'.format(
+                gcp_project=gcp_project,
+                zone=cluster['cluster']['location'],
+                cluster_id=cluster['cluster']['name'],
+            )
         ).execute()
     ## unresolved bug in GKE prevents scaling nodepools to 0
     ## https://stackoverflow.com/questions/44525692/google-cloud-deployment-manager-update-container-cluster
