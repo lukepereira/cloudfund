@@ -1,0 +1,109 @@
+
+   
+65  clusters/87fe7a0833f142f0bc0e8b3026cb532e.json
+@@ -0,0 +1,65 @@
+{
+    "cluster": {
+        "name": "pid-87fe7a0833f142f0bc0e8b3026cb532e",
+        "masterAuth": {
+            "username": "admin",
+            "clientCertificateConfig": {
+                "issueClientCertificate": true
+            }
+        },
+        "loggingService": "logging.googleapis.com",
+        "monitoringService": "monitoring.googleapis.com",
+        "network": "projects/scenic-shift-130010/global/networks/default",
+        "addonsConfig": {
+            "httpLoadBalancing": {},
+            "kubernetesDashboard": {
+                "disabled": true
+            },
+            "istioConfig": {
+                "disabled": true
+            }
+        },
+        "subnetwork": "projects/scenic-shift-130010/regions/us-central1-a/subnetworks/default",
+        "nodePools": [
+            {
+                "name": "default-pool",
+                "config": {
+                    "machineType": "f1-micro",
+                    "diskSizeGb": 100,
+                    "oauthScopes": [
+                        "https://www.googleapis.com/auth/devstorage.read_only",
+                        "https://www.googleapis.com/auth/logging.write",
+                        "https://www.googleapis.com/auth/monitoring",
+                        "https://www.googleapis.com/auth/servicecontrol",
+                        "https://www.googleapis.com/auth/service.management.readonly",
+                        "https://www.googleapis.com/auth/trace.append"
+                    ],
+                    "imageType": "COS",
+                    "diskType": "pd-standard",
+                    "labels": {
+                        "project_id": "87fe7a0833f142f0bc0e8b3026cb532e"
+                    }
+                },
+                "initialNodeCount": 2,
+                "autoscaling": {},
+                "management": {
+                    "autoUpgrade": true,
+                    "autoRepair": true
+                },
+                "version": "1.10.9-gke.5"
+            }
+        ],
+        "networkPolicy": {},
+        "ipAllocationPolicy": {},
+        "masterAuthorizedNetworksConfig": {},
+        "privateClusterConfig": {},
+        "databaseEncryption": {
+            "state": "DECRYPTED"
+        },
+        "initialClusterVersion": "1.10.9-gke.5",
+        "location": "us-central1-a",
+        "resourceLabels": {
+            "project_id": "87fe7a0833f142f0bc0e8b3026cb532e"
+        }
+    }
+} 
+   
+37  deployments/87fe7a0833f142f0bc0e8b3026cb532e.yaml
+@@ -0,0 +1,37 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "cloudfound"
+  namespace: "default"
+  labels:
+    app: "cloudfound"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "cloudfound"
+  template:
+    metadata:
+      labels:
+        app: "cloudfound"
+    spec:
+      containers:
+      - name: "cloudfound"
+        image: "docker.io/lukepereira/cloudfound:latest"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "cloudfound-service"
+  namespace: "default"
+  labels:
+    app: "cloudfound"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 80
+  selector:
+    app: "cloudfound"
+  type: "LoadBalancer"
+  loadBalancerIP: "" 
