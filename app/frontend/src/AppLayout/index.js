@@ -13,13 +13,12 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
 import { getProjects } from '../actions/projectActions'
-
+import { openSideMenu, closeSideMenu } from '../actions/UIActions'
 
 const drawerWidth = 240
 
 class AppLayout extends React.Component {
 	state = {
-    	open: true,
     	anchor: 'left',
 	}
 	
@@ -28,11 +27,11 @@ class AppLayout extends React.Component {
 	}
 
 	handleDrawerOpen = () => {
-       this.setState({ open: true })
+		this.props.openSideMenu()
 	}
 
 	handleDrawerClose = () => {
-       this.setState({ open: false })
+		this.props.closeSideMenu()
 	}
 
 	handleChangeAnchor = event => {
@@ -42,13 +41,13 @@ class AppLayout extends React.Component {
 	}
 
 	render() {
-    	const { classes, theme } = this.props
-    	const { anchor, open } = this.state
+    	const { classes, theme, isSideMenuOpen } = this.props
+    	const { anchor } = this.state
     	const drawer = (
     		<Drawer
 	    		variant="persistent"
 	    		anchor={anchor}
-	    		open={open}
+	    		open={isSideMenuOpen}
 	    		classes={{
 	    			paper: classes.drawerPaper,
 	    		}}
@@ -76,16 +75,16 @@ class AppLayout extends React.Component {
 	    		<div className={classes.appFrame}>
 	    			<AppBar
 		    			className={classNames(classes.appBar, {
-		    				[classes.appBarShift]: open,
-		    				[classes[`appBarShift-${anchor}`]]: open,
+		    				[classes.appBarShift]: isSideMenuOpen,
+		    				[classes[`appBarShift-${anchor}`]]: isSideMenuOpen,
 		    			})}
 	    			>
-	    			<Toolbar disableGutters={!open}>
+	    			<Toolbar disableGutters={!isSideMenuOpen}>
 	    				<IconButton
 		    				color="inherit"
 		    				aria-label="Open drawer"
 		    				onClick={this.handleDrawerOpen}
-		    				className={classNames(classes.menuButton, open && classes.hide)}
+		    				className={classNames(classes.menuButton, isSideMenuOpen && classes.hide)}
 	    				>
 	    				<MenuIcon />
 	    				</IconButton>
@@ -102,8 +101,8 @@ class AppLayout extends React.Component {
 	    			{before}
 	    			<main
 		    			className={classNames(classes.content, classes[`content-${anchor}`], {
-		    				[classes.contentShift]: open,
-		    				[classes[`contentShift-${anchor}`]]: open,
+		    				[classes.contentShift]: isSideMenuOpen,
+		    				[classes[`contentShift-${anchor}`]]: isSideMenuOpen,
 		    			})}
 	    			>
 		    			<div className={classes.drawerHeader} />
@@ -219,11 +218,13 @@ AppLayout.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    ...state
+	isSideMenuOpen: state.UIReducer.isSideMenuOpen
 })
 
 const mapDispatchToProps = dispatch => ({
-    getProjects: () => dispatch(getProjects())
+	getProjects: () => dispatch(getProjects()),
+	openSideMenu: () => dispatch(openSideMenu()),
+	closeSideMenu: () => dispatch(closeSideMenu()),
 })
 
 export default withStyles(styles, { withTheme: true })(

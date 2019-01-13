@@ -14,7 +14,7 @@ class Map extends Component {
         width: 0,
         height: 0,
     }
-    
+
     componentWillMount = () => {
         this.updateDimensions()
     }
@@ -24,10 +24,22 @@ class Map extends Component {
         this.setState({
             viewport: {
                 ...this.state.viewport,
-                width: this.getWidth(),
-                height: this.getHeight(),
+                width: this.getWidth(this.props),
+                height: this.getHeight(this.props),
             },
         })
+    }
+    
+    componentWillReceiveProps = (nextProps) => {
+        if (this.props.isSideMenuOpen !==  nextProps.isSideMenuOpen) {
+            this.setState({
+                viewport: {
+                    ...this.state.viewport,
+                    width: this.getWidth(nextProps),
+                    height: this.getHeight(nextProps),
+                },
+            })
+        }
     }
     
     componentWillUnmount = () => {
@@ -46,19 +58,20 @@ class Map extends Component {
         this.onViewportChange({})
     }
     
-    getHeight = () => {
+    getHeight = (props) => {
         return  this.state.height - 64
     }
     
-    getWidth = () => {
-        return  this.state.width - 240
+    getWidth = (props={}) => {
+        const sideMenu = props.isSideMenuOpen ? 240 : 0
+        return  this.state.width - sideMenu
     }
     
     onViewportChange = (updatedViewport) => {
         const viewport = {
             ...this.state.viewport,
-            height: this.getHeight(),
-            width: this.getWidth(),
+            height: this.getHeight(this.props),
+            width: this.getWidth(this.props),
             transitionInterpolator: new FlyToInterpolator(),
             transitionDuration: 1150,
             ...updatedViewport,
@@ -193,6 +206,7 @@ class Map extends Component {
 
 const mapStateToProps = state => ({
     projects_list: state.projectsReducer.projects_list,
+    isSideMenuOpen: state.UIReducer.isSideMenuOpen
 })
 
 export default withRouter(connect(mapStateToProps)(Map))
