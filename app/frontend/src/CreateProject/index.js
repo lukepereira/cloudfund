@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
 import SimpleSelect from '../components/SimpleSelect'
 import TextField from '../components/TextField'
-import { createProjectFormUpdate, getPredictedCost } from '../actions/projectActions'
+import { createProject, createProjectFormUpdate, getPredictedCost } from '../actions/projectActions'
 import { formatDollar } from '../helpers'
 
 import './CreateProject.css'
@@ -95,8 +95,9 @@ class CreateProject extends React.Component {
             return false
         }
         
-        if ( 
-            this.props.formState.machineType === 'f1-micro' 
+        if (
+            this.props.formState.locationType === CLUSTER_LOCATION_TYPES.ZONAL
+            && this.props.formState.machineType === 'f1-micro' 
             && this.props.formState.initialNodeCount < 3
         ){
             return false
@@ -110,34 +111,18 @@ class CreateProject extends React.Component {
         if (!this.validateSubmit()){
             return
         }
-        
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/create_project'    
-        const config = { 
-            headers: {  
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }
-        }
-        axios.post(
-            post_url,
-            {
-                project_name: this.props.formState.projectName,
-                cluster: this.getCluster(),
-                deployment: {
-                    format: 'yaml', 
-                    content: this.props.formState.deploymentFile,
-                },
+        const postContent = {
+            project_name: this.props.formState.projectName,
+            cluster: this.getCluster(),
+            deployment: {
+                format: 'yaml', 
+                content: this.props.formState.deploymentFile,
             },
-            config
+        }
+        this.props.createProject(
+            this.props.history,
+            postContent,
         )
-        .then((response) => {
-            console.log(response);
-            const project_id = response.data
-            this.props.history.push(`project/${project_id}`)
-        })
-        .catch((error) => {
-            console.log(error);
-        })
     }
     
     getPredictedCostFromJSON = (cluster_json) => {
@@ -390,6 +375,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+    createProject: (history, postContent) => dispatch(createProject(history, postContent)),
     createProjectFormUpdate: (field, value) => dispatch(createProjectFormUpdate(field, value)),
     getPredictedCost: (cluster) => dispatch(getPredictedCost(cluster)),
 })

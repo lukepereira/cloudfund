@@ -36,7 +36,7 @@ export default class CityPin extends PureComponent {
         const {size = 20, onClick} = this.props;
         const fill =  this.props.text > 0 
             ? '#58fe84'
-            : '#d20707'
+            : '#ff0500'
         return (
             <svg 
                 height={size}

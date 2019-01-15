@@ -56,7 +56,40 @@ export const createProjectFormUpdate = (field, value) =>
             }
         })
     }
-    
+
+
+export const createProjectActionTypes = Object.freeze({
+    CREATE_PROJECT_REQUESTED: 'CREATE_PROJECT_REQUESTED',
+    CREATE_PROJECT_SUCCESSFUL: 'CREATE_PROJECT_SUCCESSFUL',
+    CREATE_PROJECT_FAILED: 'CREATE_PROJECT_FAILED',
+})
+
+export const createProject = (history, postContent) => 
+    dispatch => {
+        dispatch({type: createProjectActionTypes.CREATE_PROJECT_REQUESTED})
+        
+        const postUrl = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/create_project'    
+        const config = { 
+            headers: {  
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+        axios.post(
+            postUrl,
+            postContent,
+            config,
+        )
+        .then((response) => {
+            dispatch({type: createProjectActionTypes.CREATE_PROJECT_SUCCESSFUL})
+            const project_id = response.data
+            history.push(`project/${project_id}`)
+        })
+        .catch((error) => {
+            console.log(error)
+            dispatch({type: createProjectActionTypes.CREATE_PROJECT_FAILED})
+        })
+    }
     
 export const getPredictedCostActionTypes = Object.freeze({
     GET_PREDICTED_COST_REQUESTED: 'GET_PREDICTED_COST_REQUESTED',
