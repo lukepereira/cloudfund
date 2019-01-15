@@ -19,6 +19,7 @@ spec:
       containers:
       - name: "cloudfound"
         image: "docker.io/lukepereira/cloudfound:latest"
+        imagePullPolicy: Always
 ---
 apiVersion: "v1"
 kind: "Service"
