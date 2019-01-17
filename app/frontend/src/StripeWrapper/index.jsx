@@ -5,7 +5,7 @@ import Payments from '../Payments'
 class StripeWrapper extends Component {
     render() {
         const apiKeyConfig = {
-            'dev': 'pk_live_FUy9Cf3yr1pWCDqAmeQRbJg1',
+            'dev': 'pk_test_KPc3VkHo7wzV1zwQJSlXOshz',
         }
         
         return (

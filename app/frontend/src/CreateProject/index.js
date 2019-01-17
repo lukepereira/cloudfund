@@ -125,38 +125,6 @@ class CreateProject extends React.Component {
         )
     }
     
-    getPredictedCostFromJSON = (cluster_json) => {
-        if (!cluster_json){
-            return 
-        }
-        
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_predicted_cost_from_json'    
-        const config = { 
-            headers: {  
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }
-        }
-        axios.post(
-            post_url,
-            {
-                cluster: {
-                    format: 'json', 
-                    content: cluster_json,
-                },
-            },
-            config
-        )
-        .then((response) => {
-            console.log(response)
-            this.setState({ cost: response.data })
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-    }
-    
-    
     getPredictedCostFromTemplate = (props) => {
         if (
             !props.formState.location 
@@ -231,6 +199,7 @@ class CreateProject extends React.Component {
                             type={'number'}
                             value={this.props.formState.initialNodeCount}
                             onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
+                            inputProps={{min: 0, max: 15}}
                         />
                     </div>
                     <div className={'flexFieldColumn'} style={{textAlign: 'center'}}> 
@@ -254,6 +223,7 @@ class CreateProject extends React.Component {
                     helperText={helperText}
                     value={this.props.formState.initialNodeCount}
                     onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
+                    inputProps={{min: 0, max: 15}}
                 />    
             )
         }

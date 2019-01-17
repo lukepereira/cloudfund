@@ -7,6 +7,7 @@ import {
     injectStripe,
     InjectedProps,
 } from 'react-stripe-elements'
+import TextField from '../components/TextField'
 import './Payments.css'
 import { formatDollar } from '../helpers'
 
@@ -15,7 +16,9 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
     constructor(props) {
         super(props)
         this.state = {
-            amount: 0,
+            amount: "1",
+            stripeFee: "0",
+            total: "0",
         }
     }    
     
@@ -99,18 +102,72 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             },
         }
     }
+    
+    handleInputChange = (targetName, targetValue) => this.setState({[targetName]: targetValue})
+    
+    applyStripeProcessingFee = (amount) => (amount + 0.3) / (1 - 0.029)
+    
+    getTotalAmountContainer = () => {
+        const round = (num) => Math.round(num * 100) / 100
+        const amount = parseFloat(this.state.amount)
+        const totalWithStripeFee = round(this.applyStripeProcessingFee(amount))
+        const stripeFee = totalWithStripeFee - amount
+        
+        return (
+            <div className={'flexField'}>
+                <div className={'flexFieldColumn'}>
+                    <TextField
+                        name={'amount'}
+                        label={'Donation'}
+                        placeholder={''}
+                        type={'number'}
+                        value={amount}
+                        onChange={(event) => this.handleInputChange(event.target.name, event.target.value)}
+                        inputProps={{min: 0}}
+                    />
+                </div>
+                <div className={'flexFieldColumn'} > 
+                    <TextField
+                        disabled
+                        name={'stripeFee'}
+                        label={'Stripe Fees'}
+                        placeholder={''}
+                        helperText={'https://support.stripe.com/questions/charging-stripe-fees-to-customers'}
+                        type={'number'}
+                        value={stripeFee}
+                    />
+                </div>
+                <div className={'flexFieldColumn'}> 
+                    <TextField
+                        disabled
+                        name={'total'}
+                        label={'Total Amount'}
+                        placeholder={''}
+                        type={'number'}
+                        value={totalWithStripeFee}
+                    />
+                </div>
+            </div>
+        )
+        
+        
+    }
   
     render() {
+        console.log("^^^^", this.state)
         return (
             <div>
-                <label>
+                {/* <label>
                     Amount
                     <input 
                         placeholder="0 USD" 
                         onChange={this.handleAmountChange}
                     >
                     </input>
-                </label>
+                </label> */}
+                
+                {this.getTotalAmountContainer()}
+                
                 <label>
                     Card details
                     <CardElement

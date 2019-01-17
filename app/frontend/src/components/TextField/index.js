@@ -34,6 +34,7 @@ class TextFields extends React.Component {
 		return ( 
             <form className={classes.container} noValidate autoComplete="off">
               <TextField
+				disabled={this.props.disabled}
 			    error={this.props.error}    
                 name={this.props.name}
                 label={this.props.label}
@@ -44,6 +45,7 @@ class TextFields extends React.Component {
 				helperText={this.props.helperText}
                 onChange={this.handleChange}
                 margin="normal"
+				InputProps={{ inputProps: this.props.inputProps }}
               />
             </form>
 		)
