@@ -5,11 +5,11 @@ import Payments from '../Payments'
 class StripeWrapper extends Component {
     render() {
         const apiKeyConfig = {
-            'dev': 'pk_test_KPc3VkHo7wzV1zwQJSlXOshz',
+            'prod': 'pk_live_FUy9Cf3yr1pWCDqAmeQRbJg1',
         }
         
         return (
-            <StripeProvider apiKey={apiKeyConfig.dev}> 
+            <StripeProvider apiKey={apiKeyConfig.prod}> 
                 <Payments {...this.props}/>
             </StripeProvider> 
         )
