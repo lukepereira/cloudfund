@@ -39,7 +39,19 @@ class AppLayout extends React.Component {
     		anchor: event.target.value,
     	})
 	}
-
+	
+	getHeaderStyle = () => {
+		const path = window.location.pathname
+		if (path.indexOf('project') !== -1 || path.indexOf('create') !== -1 ) {
+			return {
+				backgroundImage: 'linear-gradient(to right, #434863, #004d7a, #0089a5, #00c6a8, #87ff59)'
+			}
+		}
+		return {
+			backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
+		}
+	}
+	
 	render() {
     	const { classes, theme, isSideMenuOpen } = this.props
     	const { anchor } = this.state
@@ -74,6 +86,7 @@ class AppLayout extends React.Component {
     		<div className={classes.root}>
 	    		<div className={classes.appFrame}>
 	    			<AppBar
+						style={this.getHeaderStyle()}
 		    			className={classNames(classes.appBar, {
 		    				[classes.appBarShift]: isSideMenuOpen,
 		    				[classes[`appBarShift-${anchor}`]]: isSideMenuOpen,
@@ -141,7 +154,7 @@ const styles = theme => ({
 		// backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #66ff88)', // brighter right
 		// backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #87ff59)', // default
 		backgroundImage: 'linear-gradient(to right, #434863, #004d7a, #0089a5, #00c6a8, #87ff59)', // brighter left
-	    // backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
+	    backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
 	},
 	appBarShift: {
     	width: `calc(100% - ${drawerWidth}px)`,

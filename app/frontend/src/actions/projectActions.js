@@ -41,6 +41,46 @@ export const getProjects = () =>
     }
 
 
+export const getProjectByIDActionTypes = Object.freeze({
+    GET_PROJECT_REQUESTED: 'GET_PROJECT_REQUESTED',
+    GET_PROJECT_SUCCEEDED: 'GET_PROJECT_SUCCEEDED',
+    GET_PROJECT_FAILED: 'GET_PROJECT_FAILED',
+})
+
+export const getProjectByID = (project_id) => 
+    dispatch => {
+        dispatch({type: getProjectByIDActionTypes.GET_PROJECT_REQUESTED})
+        
+        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_project_by_id'    
+        const config = { 
+            headers: {  
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
+        }
+        axios.post(
+            post_url,
+            { project_id },
+            config
+        )
+        .then((response) => {
+            dispatch({
+                type: getProjectByIDActionTypes.GET_PROJECT_SUCCEEDED,
+                payload: {
+                    project: response.data
+                }
+            })
+        })
+        .catch((error) => {
+            dispatch({
+                type: getProjectByIDActionTypes.GET_PROJECT_FAILED,
+                payload: {
+                    error
+                }
+            })
+        })
+    }
+
 
 export const createProjectFormUpdateActionTypes = Object.freeze({
     CREATE_PROJECT_FORM_UPDATED: 'CREATE_PROJECT_FORM_UPDATED',
