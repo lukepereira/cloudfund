@@ -57,6 +57,8 @@ def handle_monthly_payment(
     project_id,
 ):
     project = get_project(project_id)
+    if project['status'] != 'pending_payment':
+        return
     if (project['wallet'] >= project['predicted_cost']['monthly_cost']):
         pr = approve_pending_pr(
             access_token,
