@@ -1,6 +1,6 @@
 # Cloudfound
 Cloudfound aims to support open-source and not-for-profit initiatives by crowdfunding and maintaining cloud resources and deployments using Stripe, Kubernetes, and Github.
-Ideal candidates would be services or microservices which can be used by many people and would benefit from decentralized funding and deployment review/versioning.
+Ideal candidates would be services or micro-services which can be used by many people and would benefit from decentralized funding and deployment versioning.
 
 Examples of use cases:
 - A web app created by a not-for-profit organization
@@ -47,6 +47,12 @@ Examples of use cases:
     - The project's status is updated to `stopped`
 
 
+# Wallet and Costs
+```js
+revenue = deposited + pending_deposit
+wallet = revenue - cumulative_cost
+```
+
 # Statuses
 | Project Status     |                                                                                                          |
 |--------------------|----------------------------------------------------------------------------------------------------------|
@@ -67,13 +73,6 @@ Examples of use cases:
 |---------------------|--------------------------------------------------------------|
 | pending             | The project's funds need to reach the predicted monthly cost |
 | success             | The project's minimum funds have been reached                |
-
-
-# Wallet and Costs
-```js
-revenue = deposited + pending_deposit
-wallet = revenue - cumulative_cost
-```
 
 # Roadmap
 - [ ] Add Kubernetes resource limits 
