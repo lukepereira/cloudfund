@@ -207,7 +207,7 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
                 </div>
                 <div>
                     <Elements>
-                        <CardForm project={this.props.project} fontSize={elementFontSize} />
+                        <CardForm project={this.props.project} fontSize={elementFontSize} createProjectCharge={this.props.createProjectCharge} />
                     </Elements>
                 </div>
             </div>

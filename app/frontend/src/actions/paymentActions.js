@@ -9,7 +9,7 @@ export const projectChargeActionTypes = Object.freeze({
 
 export const createProjectCharge = (postBody) =>
     dispatch => {
-        dispatch({type: projectChargeActionTypes.GET_PROJECTS_REQUESTED})
+        dispatch({type: projectChargeActionTypes.CREATE_PROJECT_CHARGE_REQUESTED})
         
         const postURL = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/handle_charge'    
         const config = { 
@@ -24,14 +24,14 @@ export const createProjectCharge = (postBody) =>
             config,
         )
         .then((response) => {
-            dispatch({ type: projectChargeActionTypes.GET_PROJECTS_SUCCEEDED })
+            dispatch({ type: projectChargeActionTypes.CREATE_PROJECT_CHARGE_SUCCEEDED })
             dispatch(getProjectByID(postBody.project_id))
         })
         .catch((error) => {
             console.log(error)
             
             dispatch({
-                type: projectChargeActionTypes.GET_PROJECTS_FAILED,
+                type: projectChargeActionTypes.CREATE_PROJECT_CHARGE_FAILED,
                 payload: {
                     error
                 }
