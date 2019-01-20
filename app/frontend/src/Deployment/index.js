@@ -1,5 +1,5 @@
 import React from 'react'
-import EmbedCode from '../EmbedCode'
+import EmbedCode from '../components/EmbedCode'
 
 import './Deployment.css'
 

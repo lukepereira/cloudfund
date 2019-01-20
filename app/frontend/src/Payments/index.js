@@ -6,20 +6,23 @@ import {
     injectStripe,
     InjectedProps,
 } from 'react-stripe-elements'
-import TextField from '../components/TextField'
-import './Payments.css'
-import { formatDollar } from '../helpers'
-
 import { createProjectCharge } from '../actions/paymentActions'
+import { formatDollar } from '../helpers'
+import TextField from '../components/TextField'
+import AlertDialog from '../components/AlertDialog'
+
+import './Payments.css'
+
 
 class _CardForm extends React.Component<InjectedProps & {fontSize: string, project: object}> {
 
     constructor(props) {
         super(props)
         this.state = {
-            amount: "1",
-            stripeFee: "0",
-            total: "0",
+            amount: '1',
+            stripeFee: '0',
+            total: '0',
+            alertDialogIsOpen: false,
         }
     }    
     
@@ -44,6 +47,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
         if (this.state.amount < 1) {
             return
         }
+        this.setState({alertDialogIsOpen: false})
         if (this.props.stripe) {
             this.props.stripe
             .createToken()
@@ -156,7 +160,18 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                         {...this.createOptions(this.props.fontSize)}
                     />
                 </label>
-                <button onClick={this.handleSubmit}>Pay</button>
+                <button onClick={() => this.setState({alertDialogIsOpen: true})}> Pay </button>
+                <AlertDialog 
+                    title={'Are you sure?'}
+                    message={[
+                        'Cloudfound is still in its beta version and things may break or drasitcally change during development. There is no guarantee your deployment will work as expected. If you encounter any issues, please open an ',
+                        <a target="_blank" href='https://github.com/lukepereira/cloudfound/issues'>issue</a>,
+                        ' on Github or contribute a fix yourself.'
+                    ]}
+                    open={this.state.alertDialogIsOpen}
+                    onAgree={this.handleSubmit}
+                    onDisagree={() => this.setState({alertDialogIsOpen: false})}
+                />
             </div>
         )
     }

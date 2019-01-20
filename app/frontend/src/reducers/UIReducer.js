@@ -1,7 +1,8 @@
 import { UIActionTypes } from '../actions/UIActions'
+import { isMobileDevice } from '../helpers'
 
 const initialProjectReducerState = {
-    isSideMenuOpen: true,
+    isSideMenuOpen: !isMobileDevice(),
 }
 
 export default (state=initialProjectReducerState, action) => {
