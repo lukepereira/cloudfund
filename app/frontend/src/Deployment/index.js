@@ -1,52 +1,52 @@
 import React from 'react'
-import axios from 'axios'
-import YAML from 'json2yaml'
+import EmbedCode from '../EmbedCode'
 
 import './Deployment.css'
 
-
 class Deployment extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            cluster: 'loading...',
-            deployment: 'loading...',
+    getClusterConfig = () => {
+        if (!this.props.project) {
+            return
         }
-    }    
-    
-    componentDidMount = () => {
-        this.getConfigurations()
+        const baseSourceUrl = 'https://github.com/lukepereira/cloudfound'
+        const baseGistURL = 'https://gist-it.appspot.com/github.com/lukepereira/cloudfound'
+        
+        const gistURL = `${baseGistURL}/blob/${this.props.project.sha}/clusters/${this.props.project.project_id}.json?footer=no&slice=`
+        const sourceURL = `${baseSourceUrl}/blob/${this.props.project.sha}/clusters/${this.props.project.project_id}.json`
+        return (
+            <div className={'configContainer'}>
+                <div className={'configHeader'}> Cluster Configuration JSON </div>
+                <div className={'codeSnippet'}>
+                    <EmbedCode html={`<script src="${gistURL}"></script>`}/>
+                </div>
+                <div className={'sourceOutlink'}>
+                    <a href={sourceURL} target={'_blank'}> View Source</a>
+                </div>
+            </div>
+        )
     }
     
-    handleClusterUpdate = (event) => this.setState({cluster: event.target.value})
-    
-    handleDeploymentUpdate = (event) => this.setState({deployment: event.target.value})    
-
-    getConfigurations = () => {
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_project_configurations'    
-        const config = { 
-            headers: {  
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }
+    getDeploymentConfig = () => {
+        if (!this.props.project) {
+            return
         }
-        axios.post(
-            post_url,
-            {
-                project_id: this.props.match && this.props.match.params.project_id
-            },
-            config
+        const baseSourceUrl = 'https://github.com/lukepereira/cloudfound'
+        const baseGistURL = 'https://gist-it.appspot.com/github.com/lukepereira/cloudfound'
+        
+        const gistURL = this.props.project && `${baseGistURL}/blob/${this.props.project.sha}/deployments/${this.props.project.project_id}.yaml?footer=no&slice=`
+        const sourceURL = `${baseSourceUrl}/blob/${this.props.project.sha}/clusters/${this.props.project.project_id}.json`
+        
+        return (
+            <div className={'configContainer'}>
+                <div className={'configHeader'}> Kubernetes Deployment YAML </div>
+                <div className={'codeSnippet'}>
+                    <EmbedCode html={`<script src="${gistURL}"></script>`}/>
+                </div>
+                <div className={'sourceOutlink'}>
+                    <a href={sourceURL} target={'_blank'}> View Source</a>
+                </div>
+            </div>
         )
-        .then((response) => {
-            console.log(response.data)
-            console.log(response.data.cluster)
-            const cluster = JSON.stringify(response.data.cluster, null, 2)
-            const deployment = YAML.stringify(response.data.deployment)
-            this.setState({cluster, deployment})
-        })
-        .catch((error) => {
-            console.log(error)
-        })
     }
     
     render() {
@@ -54,32 +54,8 @@ class Deployment extends React.Component {
             <div className="Deployment">
                 <form  onSubmit={this.handleSubmit}>
                     <h1>Deployment</h1>
-                    <label>
-                        Deployment YAML
-                        <textarea 
-                            value={this.state.cluster}
-                            placeholder=""
-                            rows='12'
-                            col='25'
-                            onChange={this.handleClusterUpdate}
-                            className={'full-width'}
-                        >
-                        </textarea>
-                    </label>
-                    <label>
-                        Deployment YAML
-                        <textarea 
-                            value={this.state.deployment}
-                            placeholder=""
-                            rows='12'
-                            col='25'
-                            onChange={this.handleDeploymentUpdate}
-                            className={'full-width'}
-                        >
-                        </textarea>
-                    </label>
-                    
-                    <button>Deploy</button>
+                    {this.getClusterConfig()}
+                    {this.getDeploymentConfig()}
                 </form>
             </div>
         )

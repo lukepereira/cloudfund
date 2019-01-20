@@ -1,4 +1,5 @@
 import axios from 'axios'
+import YAML from 'json2yaml'
 
 export const getProjectsActionTypes = Object.freeze({
     GET_PROJECTS_REQUESTED: 'GET_PROJECTS_REQUESTED',
@@ -177,3 +178,26 @@ export const getPredictedCost = (cluster_json) =>
             })
         })
     }
+    
+    
+export const getConfigurations = (project_id) => {
+    const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/get_project_configurations'    
+    const config = { 
+        headers: {  
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+        }
+    }
+    axios.post(
+        post_url,
+        { project_id },
+        config
+    )
+    .then((response) => {
+        const cluster = JSON.stringify(response.data.cluster, null, 2)
+        const deployment = YAML.stringify(response.data.deployment)
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+}

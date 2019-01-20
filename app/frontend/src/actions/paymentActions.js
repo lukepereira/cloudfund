@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getProjectByID } from 'projectActions'
+import { getProjectByID } from './projectActions'
 
 export const projectChargeActionTypes = Object.freeze({
     CREATE_PROJECT_CHARGE_REQUESTED: 'CREATE_PROJECT_CHARGE_REQUESTED',
@@ -7,11 +7,11 @@ export const projectChargeActionTypes = Object.freeze({
     CREATE_PROJECT_CHARGE_FAILED: 'CREATE_PROJECT_CHARGE_FAILED',
 })
 
-createProjectCharge = (stripeToken, amount, project_id) =>
+export const createProjectCharge = (postBody) =>
     dispatch => {
-        dispatch({type: getProjectsActionTypes.GET_PROJECTS_REQUESTED})
+        dispatch({type: projectChargeActionTypes.GET_PROJECTS_REQUESTED})
         
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/handle_charge'    
+        const postURL = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/handle_charge'    
         const config = { 
             headers: {  
                 'Content-Type': 'application/json',
@@ -19,23 +19,19 @@ createProjectCharge = (stripeToken, amount, project_id) =>
             }
         }
         axios.post(
-            post_url, 
-            { 
-                stripeToken,
-                amount,
-                project_id,
-            },
+            postURL, 
+            postBody,
             config,
         )
         .then((response) => {
-            dispatch({ type: getProjectsActionTypes.GET_PROJECTS_SUCCEEDED })
-            dispatch(getProjectByID(project_id))
+            dispatch({ type: projectChargeActionTypes.GET_PROJECTS_SUCCEEDED })
+            dispatch(getProjectByID(postBody.project_id))
         })
         .catch((error) => {
             console.log(error)
             
             dispatch({
-                type: getProjectsActionTypes.GET_PROJECTS_FAILED,
+                type: projectChargeActionTypes.GET_PROJECTS_FAILED,
                 payload: {
                     error
                 }

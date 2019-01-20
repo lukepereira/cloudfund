@@ -8,7 +8,6 @@
 .Deployment form {
     margin-bottom: 40px;
     padding-bottom: 40px;
-    border-bottom: 3px solid #e6ebf1;
 }
 
 .Deployment h1 {
@@ -20,39 +19,7 @@
     padding: 0;
 }
 
-.Deployment button {
-    white-space: nowrap;
-    border: 0;
-    outline: 0;
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 14px;
-    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-    color: #fff;
-    border-radius: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-    background-color: #6772e5;
-    background-image: linear-gradient(to top, #00799d, #0091ad, #00a8b3, #00bfae, #03d49f);
-    text-decoration: none;
-    -webkit-transition: all 150ms ease;
-    transition: all 150ms ease;
-    margin-top: 10px;
-}
-
-.Deployment button:hover {
-    color: #fff;
-    cursor: pointer;
-    background-color: #7795f8;
-    background-image: linear-gradient(to top, #22b09f, #00c5a2, #0bd99f, #36ec96, #5eff88);
-    transform: translateY(-1px);
-    box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
-}
-
-.Deployment label {
+.Deployment .configHeader {
     color: #6b7c93;
     font-weight: 300;
     letter-spacing: 0.025em;
@@ -103,6 +70,21 @@
 }
 
 
+.Deployment .codeSnippet {
+    margin: 8px 0 8px;
+    height: 300px;
+    overflow: auto;
+    font-size: 14px;
+}
+
+.Deployment .configContainer {
+    margin: 32px 0;
+}
+
+.Deployment .sourceOutlink {
+    text-align: right;
+    text-decoration: none;
+} 
 
 .full-width {
     width: 100%;

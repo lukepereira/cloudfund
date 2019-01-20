@@ -193,6 +193,7 @@ class CreateProject extends React.Component {
                 <div className={'flexField'}>
                     <div className={'flexFieldColumn'}>
                         <TextField
+                            error={this.props.formState.initialNodeCount < 0}
                             name={'initialNodeCount'}
                             label={'Number of Nodes (per zone)'}
                             placeholder={''}
@@ -215,7 +216,7 @@ class CreateProject extends React.Component {
                 : ''
             return (
                 <TextField
-                    error={error}
+                    error={error || this.props.formState.initialNodeCount < 0}
                     name={'initialNodeCount'}
                     label={'Number of Nodes'}
                     placeholder={''}

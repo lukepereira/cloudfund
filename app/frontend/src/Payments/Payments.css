@@ -57,7 +57,6 @@
 .StripeElement {
     display: block;
     margin: 10px 0 20px 0;
-    max-width: 500px;
     padding: 10px 14px;
     font-size: 1em;
     font-family: 'Source Code Pro', monospace;
@@ -91,6 +90,10 @@
     background-color: #f3f3f34f;
     box-shadow: 8px 5px 23px -6px rgba(0,0,0,0.1);
     justify-content: space-around;
+}
+
+.subContainer {
+    
 }
 
 .flexField {

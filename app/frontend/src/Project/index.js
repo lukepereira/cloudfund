@@ -10,18 +10,14 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
 
+import EmbedCode from '../EmbedCode'
 
 function TabContainer({ children, dir }) {
   return (
-    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
+    <Typography component="div" dir={dir} >
       {children}
     </Typography>
   )
-}
-
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired,
 }
 
 const styles = theme => ({
@@ -49,6 +45,7 @@ class Project extends React.Component {
       this.setState({ value: index })
     }
     
+    
     getProjectInfo = () => {
         const display_rows = this.props.project ? [            
             { 
@@ -72,7 +69,7 @@ class Project extends React.Component {
         
         return (
             this.props.project &&
-            <div>
+            <div className={'Project'}>
                 <h1> {this.props.project.project_name} </h1>
                 {
                     display_rows.map((row, i) => (
@@ -85,22 +82,32 @@ class Project extends React.Component {
             </div>
         )
     }
+    
     getClusterInfo = () => {
         const display_rows = this.props.project ? [
             {
-                display_content: '' ,
-                display_name: ''
+                display_content: this.props.project.cluster_location ,
+                display_name: 'Location',
             },
+            {
+                display_content: this.props.project.endpoint,
+                display_name: 'Endpoint',
+            }
         ]
         : []
-        return (
+        return (    
             this.props.project &&
-            display_rows.map((row, i) => (
-                <div className={'projectTableRow'} key={i}>
-                    <div className={'projectTableKey'}>{row.display_name}:</div> 
-                    <div className={'projectTableValue'}>{row.display_content}</div>
-                </div>
-            ))
+            <div className={'Project'}>
+                {
+                    display_rows.map((row, i) => (
+                        <div className={'projectTableRow'} key={i}>
+                            <div className={'projectTableKey'}>{row.display_name}:</div> 
+                            <div className={'projectTableValue'}>{row.display_content}</div>
+                        </div>
+                    ))
+                }    
+            </div>
+
         )
     }
     getFundsInfo = () => {
@@ -130,12 +137,16 @@ class Project extends React.Component {
         : []
         return (
             this.props.project &&
-            display_rows.map((row, i) => (
-                <div className={'projectTableRow'} key={i}>
-                    <div className={'projectTableKey'}>{row.display_name}:</div> 
-                    <div className={'projectTableValue'}>{row.display_content}</div>
-                </div>
-            ))
+            <div className={'Project'}>
+                {
+                    display_rows.map((row, i) => (
+                        <div className={'projectTableRow'} key={i}>
+                            <div className={'projectTableKey'}>{row.display_name}:</div> 
+                            <div className={'projectTableValue'}>{row.display_content}</div>
+                        </div>
+                    ))
+                }
+            </div>
         )
     }
     
@@ -162,6 +173,7 @@ class Project extends React.Component {
                     axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                     index={this.state.value}
                     onChangeIndex={this.handleChangeIndex}
+                    
                 >
                     <TabContainer dir={theme.direction}>
                         {this.getProjectInfo()}

@@ -1,6 +1,5 @@
 import React from 'react'
-
-import axios from 'axios'
+import { connect } from 'react-redux'
 import {
     CardElement,
     Elements,
@@ -10,6 +9,8 @@ import {
 import TextField from '../components/TextField'
 import './Payments.css'
 import { formatDollar } from '../helpers'
+
+import { createProjectCharge } from '../actions/paymentActions'
 
 class _CardForm extends React.Component<InjectedProps & {fontSize: string, project: object}> {
 
@@ -28,28 +29,14 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
         if (!this.props.project) {
             return
         }
-        const post_url = 'https://us-central1-scenic-shift-130010.cloudfunctions.net/handle_charge'    
-        const config = { 
-            headers: {  
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }
+        
+        const postBody = {
+            stripeToken: stripeToken,
+            amount: this.state.amount,
+            project_id: this.props.project.project_id,
         }
-        axios.post(
-            post_url, 
-            { 
-                stripeToken: stripeToken,
-                amount: this.state.amount,
-                project_id: this.props.project.project_id,
-            },
-            config,
-        )
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
+        
+        this.props.createProjectCharge(postBody)
     }
 
     handleSubmit = (ev) => {
@@ -117,6 +104,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             <div className={'flexField'}>
                 <div className={'flexFieldColumn'}>
                     <TextField
+                        error={amount < 0}
                         name={'amount'}
                         label={'Donation'}
                         placeholder={''}
@@ -132,7 +120,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                         name={'stripeFee'}
                         label={'Stripe Fees'}
                         placeholder={''}
-                        helperText={'https://support.stripe.com/questions/charging-stripe-fees-to-customers'}
+                        helperText={''} //{'https://support.stripe.com/questions/charging-stripe-fees-to-customers'}
                         type={'number'}
                         value={stripeFee}
                     />
@@ -154,20 +142,9 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
     }
   
     render() {
-        console.log("^^^^", this.state)
         return (
             <div>
-                {/* <label>
-                    Amount
-                    <input 
-                        placeholder="0 USD" 
-                        onChange={this.handleAmountChange}
-                    >
-                    </input>
-                </label> */}
-                
                 {this.getTotalAmountContainer()}
-                
                 <label>
                     Card details
                     <CardElement
@@ -225,15 +202,23 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
         return (
             <div className="Payments">
                 <h1>Payments</h1>
-                <div>
+                <div className={'subContainer'}>
                     {this.getPaymentStatus()}
                 </div>
-                <Elements>
-                    <CardForm project={this.props.project} fontSize={elementFontSize} />
-                </Elements>
+                <div>
+                    <Elements>
+                        <CardForm project={this.props.project} fontSize={elementFontSize} />
+                    </Elements>
+                </div>
             </div>
         )
     }
 }
 
-export default Payments
+const mapStateToProps = state => ({ })
+
+const mapDispatchToProps = dispatch => ({
+    createProjectCharge: (postBody) => dispatch(createProjectCharge(postBody)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Payments) 
