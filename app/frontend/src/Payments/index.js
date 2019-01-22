@@ -79,9 +79,10 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             style: {
                 base: {
                     fontSize,
-                    color: '#424770',
+                    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                    color: '#6b7c93',
+                    fontWeight: 300,
                     letterSpacing: '0.025em',
-                    fontFamily: 'Source Code Pro, monospace',
                     '::placeholder': {
                         color: '#aab7c4',
                     },
@@ -141,8 +142,6 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                 </div>
             </div>
         )
-        
-        
     }
   
     render() {
@@ -166,7 +165,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                     message={[
                         'Cloudfound is still in its beta version and things may break or drasitcally change during development. There is no guarantee your deployment will work as expected. If you encounter any issues, please open an ',
                         <a target="_blank" href='https://github.com/lukepereira/cloudfound/issues'>issue</a>,
-                        ' on Github or contribute a fix yourself.'
+                        ' on Github or contribute a fix.'
                     ]}
                     open={this.state.alertDialogIsOpen}
                     onAgree={this.handleSubmit}

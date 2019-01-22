@@ -1,13 +1,13 @@
 .Project {
-    margin: 0 auto;
+    margin: 32px auto 0;
     max-width: 800px;
-    box-sizing: border-box;
-    padding: 16px 10%;
+    width: 70%;
 }
 
 .Project form {
     margin-bottom: 40px;
     padding-bottom: 40px;
+    
 }
 
 .Project h1 {

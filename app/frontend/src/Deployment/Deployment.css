@@ -5,11 +5,6 @@
     padding: 16px 10%;
 }
 
-.Deployment form {
-    margin-bottom: 40px;
-    padding-bottom: 40px;
-}
-
 .Deployment h1 {
     color: #32325d;
     font-weight: 400;
@@ -83,7 +78,19 @@
 
 .Deployment .sourceOutlink {
     text-align: right;
+    font-weight: 300;
+    letter-spacing: 0.025em;
+} 
+
+.Deployment .sourceOutlink a {
     text-decoration: none;
+    color: #6b7c93;
+} 
+
+.Deployment .sourceOutlink a:hover {
+    text-decoration: none;
+    opacity: 0.8;
+
 } 
 
 .full-width {

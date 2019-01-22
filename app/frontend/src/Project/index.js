@@ -10,7 +10,7 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
 
-import EmbedCode from '../EmbedCode'
+import EmbedCode from '../components/EmbedCode'
 
 function TabContainer({ children, dir }) {
   return (
