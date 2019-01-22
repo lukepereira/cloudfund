@@ -137,7 +137,7 @@ def create_deployment_from_generator(
         deployment_response = {}
         
         if deployment['kind'] == 'Service' and project_status != 'running':
-            service_responåse = create_service_from_configuration(
+            service_response = create_service_from_configuration(
                 gcp_project=gcp_project,
                 cluster=cluster,
                 service=deployment,
