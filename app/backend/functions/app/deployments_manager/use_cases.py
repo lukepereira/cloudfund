@@ -98,7 +98,7 @@ def get_cluster_json_from_template(
     version='1.10.9-gke.5',
 ):
     cluster_json = constants.CLUSTER_TEMPLATE
-    cluster_json['cluster']['name'] = 'pid-{project_id}'.format(
+    cluster_json['cluster']['name'] = 'cluster-{project_id}'.format(
         project_id=project_id
     )
     cluster_json['cluster']['network'] = 'projects/scenic-shift-130010/global/networks/default'

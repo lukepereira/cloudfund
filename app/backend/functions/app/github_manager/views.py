@@ -56,7 +56,7 @@ def validate_cluster(project_id, cluster):
             pool['config']['labels'] = {}
         pool['config']['labels']['project_id'] = project_id
     
-    cluster_json['cluster']['name'] = 'pid-{project_id}'.format(
+    cluster_json['cluster']['name'] = 'cluster-{project_id}'.format(
         project_id=project_id
     )
     
