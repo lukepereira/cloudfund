@@ -75,11 +75,13 @@ wallet = revenue - cumulative_cost
 | success             | The project's minimum funds have been reached                |
 
 # Roadmap
-- [ ] Add Kubernetes resource limits 
-- [ ] Support Kubeless functions for serverless functions
-- [ ] Support cluster load balancer
+- [ ] Create deployment from template UI
+- [ ] Support persistent disks
 - [ ] Support preemptible machines
-- [ ] Set up not-for-profit corporation and account
+- [ ] Support Kubeless functions for serverless functions
+- [ ] Add Kubernetes resource limits 
+- [ ] Set up not-for-profit corporation and USD account
 
 # Challenges
-Prevent clusters being misused to mine cryptocurrencies anonymously
+Prevent clusters being misused to mine cryptocurrencies anonymously 
+
