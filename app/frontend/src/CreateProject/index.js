@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import SimpleListMenu from '../components/SimpleListMenu'
 import SimpleSelect from '../components/SimpleSelect'
 import TextField from '../components/TextField'
+import AlertDialog from '../components/AlertDialog'
 import { createProject, createProjectFormUpdate, getPredictedCost } from '../actions/projectActions'
 import { formatDollar } from '../helpers'
 
@@ -18,8 +19,9 @@ class CreateProject extends React.Component {
             clusterFile: '',
             deploymentFile: '',
             cost: null,
+            alertDialogIsOpen: false,
         }
-    }    
+    }
 
     componentWillReceiveProps = (nextProps) => {
         if (
@@ -29,22 +31,22 @@ class CreateProject extends React.Component {
         ){
             this.getPredictedCostFromTemplate(nextProps)
         }
-        
+
     }
 
     handleFormUpdate = (fieldName, value) => {
         this.props.createProjectFormUpdate(fieldName, value)
-    } 
+    }
 
     handleDeployment = (event) => this.handleFormUpdate('deploymentFile', event.target.value)
-    
+
     handleCluster = (event) => {
         this.handleFormUpdate('JSONclusterFile', event.target.value)
         if (this.isValidJson(event.target.value)) {
             this.props.getPredictedCost(event.target.value)
         }
     }
-    
+
     isValidJson = (json) => {
         try {
             JSON.parse(json);
@@ -53,11 +55,11 @@ class CreateProject extends React.Component {
             return false;
         }
     }
-    
+
     getCluster = () => {
         if (this.props.formState.formType === CLUSTER_FORMS.JSON_FORM){
             return {
-                format: 'json', 
+                format: 'json',
                 content: this.props.formState.JSONClusterFile,
             }
         }
@@ -68,45 +70,45 @@ class CreateProject extends React.Component {
             }
         }
     }
-    
+
     validateSubmit = () => {
         if (
-            !this.props.formState.deploymentFile 
+            !this.props.formState.deploymentFile
             || !this.props.formState.projectName
         ) {
             return false
         }
-        
+
         if (
             this.props.formState.formType === CLUSTER_FORMS.JSON_FORM
             && !this.props.formState.JSONClusterFile
         ) {
             return false
         }
-        
+
         if (
             this.props.formState.formType === CLUSTER_FORMS.TEMPLATE_FORM
             && (
-                !this.props.formState.location 
+                !this.props.formState.location
                 || !this.props.formState.machineType
                 || !this.props.formState.initialNodeCount
             )
         ) {
             return false
         }
-        
+
         if (
             this.props.formState.locationType === CLUSTER_LOCATION_TYPES.ZONAL
-            && this.props.formState.machineType === 'f1-micro' 
+            && this.props.formState.machineType === 'f1-micro'
             && this.props.formState.initialNodeCount < 3
         ){
             return false
         }
-        
+
         return true
     }
-    
-        
+
+
     handleSubmit = () => {
         if (!this.validateSubmit()){
             return
@@ -115,7 +117,7 @@ class CreateProject extends React.Component {
             project_name: this.props.formState.projectName,
             cluster: this.getCluster(),
             deployment: {
-                format: 'yaml', 
+                format: 'yaml',
                 content: this.props.formState.deploymentFile,
             },
         }
@@ -124,10 +126,21 @@ class CreateProject extends React.Component {
             postContent,
         )
     }
-    
+
+    openAlert = () => {
+        if (!this.validateSubmit()){
+            return
+        }
+
+        this.setState({alertDialogIsOpen: true})
+    }
+
+    closeAlert = () => this.setState({alertDialogIsOpen: false})
+
+
     getPredictedCostFromTemplate = (props) => {
         if (
-            !props.formState.location 
+            !props.formState.location
             || !props.formState.machineType
             || !props.formState.initialNodeCount
         ){
@@ -147,7 +160,7 @@ class CreateProject extends React.Component {
         }
         this.props.getPredictedCost(JSON.stringify(clusterJSON))
     }
-    
+
     getPredictedCostSection = () => {
         const monthlyCost = this.props.predictedCost ? formatDollar(this.props.predictedCost.monthly_cost) : 0
         const hourlyCost = this.props.predictedCost ? formatDollar(this.props.predictedCost.hourly_cost) : 0
@@ -162,7 +175,7 @@ class CreateProject extends React.Component {
             </div>
         )
     }
-    
+
     getLocationField = () => {
         if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL) {
             return (
@@ -185,7 +198,7 @@ class CreateProject extends React.Component {
             />
         )
     }
-    
+
     getNodeCountField = () => {
         if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.REGIONAL) {
             const totalNodeCount = this.props.formState.initialNodeCount && this.props.formState.initialNodeCount > 0 && this.props.formState.initialNodeCount * 3
@@ -203,7 +216,7 @@ class CreateProject extends React.Component {
                             inputProps={{min: 0, max: 15}}
                         />
                     </div>
-                    <div className={'flexFieldColumn'} style={{textAlign: 'center'}}> 
+                    <div className={'flexFieldColumn'} style={{textAlign: 'center'}}>
                         { `Total (in all zones): ${totalNodeCount || 0}`}
                     </div>
                 </div>
@@ -211,8 +224,8 @@ class CreateProject extends React.Component {
         }
         if (this.props.formState.locationType === CLUSTER_LOCATION_TYPES.ZONAL) {
             const error = this.props.formState.machineType === 'f1-micro' && this.props.formState.initialNodeCount < 3
-            const helperText = error 
-                ? 'The total number of nodes in the cluster must be at least 3 when all the node pools have machine type "f1-micro":' 
+            const helperText = error
+                ? 'The total number of nodes in the cluster must be at least 3 when all the node pools have machine type "f1-micro":'
                 : ''
             return (
                 <TextField
@@ -225,11 +238,11 @@ class CreateProject extends React.Component {
                     value={this.props.formState.initialNodeCount}
                     onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
                     inputProps={{min: 0, max: 15}}
-                />    
+                />
             )
         }
     }
-    
+
     getClusterTemplateForm = () => (
         <div>
             <div className={'fieldRow'}>
@@ -246,11 +259,11 @@ class CreateProject extends React.Component {
             <div className={'fieldRow'}>
                 { this.getLocationField() }
             </div>
-            
+
             <div className={'fieldRow'}>
                 { this.getNodeCountField() }
             </div>
-            
+
             <div className={'fieldRow'}>
                 <SimpleSelect
                     name={'machineType'}
@@ -262,7 +275,7 @@ class CreateProject extends React.Component {
             </div>
         </div>
     )
-    
+
     getClusterJSONForm = () => (
         <div className={'fieldRow'}>
             <label>
@@ -279,15 +292,15 @@ class CreateProject extends React.Component {
             </label>
         </div>
     )
-    
+
     render() {
         return (
             <div className="CreateProject">
                 <div className="container">
                     <h1>Create</h1>
-                    
+
                     { this.getPredictedCostSection() }
-                    
+
                     <div className={'fieldRow'}>
                         <TextField
                             name={'projectName'}
@@ -308,7 +321,7 @@ class CreateProject extends React.Component {
                             onChange={(selectedOption) => this.handleFormUpdate('formType', selectedOption) }
                         />
                     </div> */}
-                    
+
                     {
                         this.props.formState.formType === CLUSTER_FORMS.TEMPLATE_FORM &&
                         this.getClusterTemplateForm()
@@ -332,7 +345,24 @@ class CreateProject extends React.Component {
                         </label>
                     </div>
                     <div className={'fieldRow'}>
-                        <button onClick={this.handleSubmit}>Create</button>
+                        <button onClick={this.openAlert}>Create</button>
+
+                        <AlertDialog
+                            title={'Coming Soon...'}
+                            message={[
+                                'Cloudfound is still in its beta version and things may break or drasitcally change during development.',
+                                ' Before opening the fully functional app to the public, I wanted to release a limited version to get some feedback and find contributors.',
+                                " In the meantime, feel free to watch the ",
+                                <a target="_blank" href='https://github.com/lukepereira/cloudfound'>repository</a>,
+                                " if you're interested in recieving updates.",
+                            ]}
+                            open={this.state.alertDialogIsOpen}
+                            onAgreeText={'Close'}
+                            onAgree={this.closeAlert}
+                            // onAgree={this.handleSubmit}
+                            // onDisagree={this.closeAlert}
+
+                        />
                     </div>
                 </div>
             </div>

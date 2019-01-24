@@ -8,7 +8,6 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 class AlertDialog extends React.Component {
 
-
   render() {
     return (
       <div>
@@ -24,13 +23,20 @@ class AlertDialog extends React.Component {
               {this.props.message}
             </DialogContentText>
           </DialogContent>
+
           <DialogActions>
-            <Button onClick={this.props.onDisagree} color="primary">
-              Disagree
-            </Button>
-            <Button onClick={this.props.onAgree} color="primary" autoFocus>
-              Agree
-            </Button>
+              {
+                  this.props.onDisagree &&
+                  <Button onClick={this.props.onDisagree} color="primary">
+                      {this.props.onDisagreeText || 'Disagree'}
+                  </Button>
+              }
+              {
+                  this.props.onAgree &&
+                  <Button onClick={this.props.onAgree} color="primary" autoFocus>
+                      {this.props.onAgreeText || 'Agree'}
+                  </Button>
+              }
           </DialogActions>
         </Dialog>
       </div>

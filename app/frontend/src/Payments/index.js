@@ -24,21 +24,21 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             total: '0',
             alertDialogIsOpen: false,
         }
-    }    
-    
+    }
+
     handleAmountChange = (event) => this.setState({amount: event.target.value})
-    
+
     createCharge = (stripeToken) => {
         if (!this.props.project) {
             return
         }
-        
+
         const postBody = {
             stripeToken: stripeToken,
             amount: this.state.amount,
             project_id: this.props.project.project_id,
         }
-        
+
         this.props.createProjectCharge(postBody)
     }
 
@@ -56,8 +56,8 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             console.log("Stripe.js hasn't loaded yet.")
         }
     }
-  
-    
+
+
     handleBlur = () => {
         console.log('[blur]')
     }
@@ -73,7 +73,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
     handleReady = () => {
         console.log('[ready]')
     }
-    
+
     createOptions = (fontSize: string, padding: ?string) => {
         return {
             style: {
@@ -94,17 +94,17 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             },
         }
     }
-    
+
     handleInputChange = (targetName, targetValue) => this.setState({[targetName]: targetValue})
-    
+
     applyStripeProcessingFee = (amount) => (amount + 0.3) / (1 - 0.029)
-    
+
     getTotalAmountContainer = () => {
         const round = (num) => Math.round(num * 100) / 100
         const amount = parseFloat(this.state.amount)
         const totalWithStripeFee = round(this.applyStripeProcessingFee(amount))
         const stripeFee = totalWithStripeFee - amount
-        
+
         return (
             <div className={'flexField'}>
                 <div className={'flexFieldColumn'}>
@@ -119,7 +119,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                         inputProps={{min: 0}}
                     />
                 </div>
-                <div className={'flexFieldColumn'} > 
+                <div className={'flexFieldColumn'} >
                     <TextField
                         disabled
                         name={'stripeFee'}
@@ -130,7 +130,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                         value={stripeFee}
                     />
                 </div>
-                <div className={'flexFieldColumn'}> 
+                <div className={'flexFieldColumn'}>
                     <TextField
                         disabled
                         name={'total'}
@@ -143,7 +143,13 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
             </div>
         )
     }
-  
+
+    openAlert = () => {
+        if (this.state.amount > 0) {
+            this.setState({alertDialogIsOpen: true})
+        }
+    }
+
     render() {
         return (
             <div>
@@ -159,13 +165,15 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                         {...this.createOptions(this.props.fontSize)}
                     />
                 </label>
-                <button onClick={() => this.setState({alertDialogIsOpen: true})}> Pay </button>
-                <AlertDialog 
+                <button onClick={this.openAlert}> Pay </button>
+                <AlertDialog
                     title={'Are you sure?'}
                     message={[
-                        'Cloudfound is still in its beta version and things may break or drasitcally change during development. There is no guarantee your deployment will work as expected. If you encounter any issues, please open an ',
+                        'Cloudfound is still in its beta version and things may break or drasitcally change during development.',
+                        ' There is no guarantee your deployment will work as expected.',
+                        ' If you encounter any issues, please open an ',
                         <a target="_blank" href='https://github.com/lukepereira/cloudfound/issues'>issue</a>,
-                        ' on Github or contribute a fix.'
+                        ' on Github or help contribute a fix.'
                     ]}
                     open={this.state.alertDialogIsOpen}
                     onAgree={this.handleSubmit}
@@ -235,4 +243,4 @@ const mapDispatchToProps = dispatch => ({
     createProjectCharge: (postBody) => dispatch(createProjectCharge(postBody)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Payments) 
+export default connect(mapStateToProps, mapDispatchToProps)(Payments)
