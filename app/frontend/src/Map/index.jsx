@@ -18,7 +18,7 @@ class Map extends Component {
     componentWillMount = () => {
         this.updateDimensions()
     }
-    
+
     componentDidMount = () => {
         window.addEventListener("resize", this.updateDimensions)
         this.setState({
@@ -29,7 +29,7 @@ class Map extends Component {
             },
         })
     }
-    
+
     componentWillReceiveProps = (nextProps) => {
         if (this.props.isSideMenuOpen !==  nextProps.isSideMenuOpen) {
             this.setState({
@@ -41,11 +41,11 @@ class Map extends Component {
             })
         }
     }
-    
+
     componentWillUnmount = () => {
         window.removeEventListener('resize', this.updateDimensions)
     }
-    
+
     updateDimensions = () => {
         const w = window,
             d = document,
@@ -53,20 +53,20 @@ class Map extends Component {
             body = d.getElementsByTagName('body')[0],
             width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
             height = w.innerHeight|| documentElement.clientHeight|| body.clientHeight
-        
+
         this.setState({width, height })
         this.onViewportChange({})
     }
-    
+
     getHeight = (props) => {
         return  this.state.height - 64
     }
-    
+
     getWidth = (props={}) => {
         const sideMenu = props.isSideMenuOpen ? 240 : 0
         return  this.state.width - sideMenu
     }
-    
+
     onViewportChange = (updatedViewport) => {
         const viewport = {
             ...this.state.viewport,
@@ -78,7 +78,7 @@ class Map extends Component {
         }
         this.setState({viewport})
     }
-    
+
     onPinClick = (selectedRegion) => {
         this.onViewportChange({
             latitude: REGIONS[selectedRegion].latitude,
@@ -88,7 +88,7 @@ class Map extends Component {
         })
         this.setState({selectedRegion})
     }
-    
+
     getProjectsByLocation = (location) => {
         return this.props.projects_list &&
             this.props.projects_list.filter((project) => {
@@ -96,10 +96,9 @@ class Map extends Component {
                 return project.cluster_location.indexOf(location) > -1
             })
     }
-    
-    getMarkers = () => {        
+
+    getMarkers = () => {
         return REGION_NAMES.map((regionName, index) => {
-        
             if (!REGIONS[regionName].latitude || !REGIONS[regionName].longitude) {
                 return
             }
@@ -120,16 +119,16 @@ class Map extends Component {
             )
         })
     }
-    
+
     onPopUpClose = () => {
         this.onViewportChange(INITIAL_VIEWPORT)
         this.setState({selectedRegion: null})
     }
-    
+
     getPopup() {
         const {selectedRegion} = this.state
         const projects = this.getProjectsByLocation(selectedRegion)
-        
+
         return selectedRegion && (
             <Popup tipSize={5}
                 anchor="bottom"
@@ -144,7 +143,7 @@ class Map extends Component {
                     <div className={'PopupTopSpace'} />
                     {/* <div className={'PopupTextRow'}>
                         <div className={'PopupTextTitle'}>Location:</div>
-                        <div className={'PopupTextValue'}>{selectedRegion}</div>    
+                        <div className={'PopupTextValue'}>{selectedRegion}</div>
                     </div> */}
                     <div className={'PopupTextRow'}>
                         <div className={'PopupTextTitle'}>Clusters:</div>
@@ -162,7 +161,7 @@ class Map extends Component {
             </Popup>
         )
     }
-    
+
     getProjectLinks = (projects) => (
         projects.map((project, i) => {
             return (
@@ -172,19 +171,19 @@ class Map extends Component {
                     onClick={() => this.props.history.push(`/project/${project.project_id}`)}
                 >
                     {`→ ${project.project_name}`}
-                </div>    
+                </div>
             )
         })
     )
-    
+
     getCursor = ({isHovering, isDragging}) => {
         return isDragging ? 'grab' : 'default'
     }
-    
+
     render() {
         return (
-            <div 
-                className={'mapContainer'} 
+            <div
+                className={'mapContainer'}
                 ref={(mapWidgetElement) => this.mapWidgetElement = mapWidgetElement}
             >
                 <ReactMapGL
@@ -193,7 +192,7 @@ class Map extends Component {
                     getCursor={this.getCursor}
                     onViewportChange={this.onViewportChange}
                     mapboxApiAccessToken={'pk.eyJ1IjoibHVrZXBsYXRvIiwiYSI6ImNqNjJsMnJnNTE4MW0ycW1vcmxtNDU3ZmYifQ.rS-ceguS8DMmMNVAYz_9gQ'}
-                    mapStyle="mapbox://styles/mapbox/dark-v9" 
+                    mapStyle="mapbox://styles/mapbox/dark-v9"
                 >
                     { this.getMarkers() }
                     { this.getPopup() }

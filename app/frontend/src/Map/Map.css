@@ -35,3 +35,7 @@
 .projectLink:hover {
     opacity: 0.8;
 }
+.mapboxgl-marker {
+    height: 0;
+    width: 0;
+}
