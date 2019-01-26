@@ -348,20 +348,19 @@ class CreateProject extends React.Component {
                         <button onClick={this.openAlert}>Create</button>
 
                         <AlertDialog
-                            title={'Coming Soon...'}
+                            title={'Are you sure?'}
                             message={[
                                 'Cloudfound is still in its beta version and things may break or drasitcally change during development.',
-                                ' Before opening the fully functional app to the public, I wanted to release a limited version to get some feedback and find contributors.',
-                                " In the meantime, feel free to watch the ",
-                                <a target="_blank" href='https://github.com/lukepereira/cloudfound'>repository</a>,
-                                " if you're interested in recieving updates.",
+                                ' There is no guarantee your deployment will work as expected.',
+                                ' If you encounter any issues, please open an ',
+                                <a target="_blank" href='https://github.com/lukepereira/cloudfound/issues'>issue</a>,
+                                ' on Github or help contribute a fix.'
                             ]}
                             open={this.state.alertDialogIsOpen}
-                            onAgreeText={'Close'}
-                            onAgree={this.closeAlert}
-                            // onAgree={this.handleSubmit}
-                            // onDisagree={this.closeAlert}
-
+                            // onAgreeText={'Close'}
+                            // onAgree={this.closeAlert}
+                            onAgree={this.handleSubmit}
+                            onDisagree={this.closeAlert}
                         />
                     </div>
                 </div>
