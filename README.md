@@ -1,5 +1,6 @@
 # Cloudfound
-[Cloudfound](https://cloudfound.io) aims to support open-source and not-for-profit initiatives by crowdfunding and maintaining cloud resources and deployments using Stripe, Kubernetes, and Github.
+[Cloudfound](https://cloudfound.io) aims to support open-source and decentralized initiatives by crowdfunding and maintaining cloud resources and deployments using Stripe, Kubernetes, and Github.
+The app itself functions as a (self-referential) proof of concept since its cluster, deployment, and fundings are all managed by its own code.
 Ideal candidates would be services or micro-services which can be used by many people and would benefit from decentralized funding and deployment versioning.
 
 Examples of use cases:
