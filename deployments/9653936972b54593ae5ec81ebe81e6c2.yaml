@@ -1,0 +1,39 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "cloudfound"
+  namespace: "default"
+  labels:
+    app: "cloudfound"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "cloudfound"
+  template:
+    metadata:
+      labels:
+        app: "cloudfound"
+    spec:
+      containers:
+      - name: "cloudfound"
+        image: "docker.io/lukepereira/cloudfound:latest"
+        imagePullPolicy: Always
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "cloudfound-service"
+  namespace: "default"
+  labels:
+    app: "cloudfound"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 80
+  selector:
+    app: "cloudfound"
+  type: "LoadBalancer"
+  loadBalancerIP: "35.193.70.71"
+View Source
