@@ -1,19 +1,22 @@
+Disclaimer: I recently removed the cluster hosting this app because it recieved very little attention. Please contact me if you are interested in contributing or maintaining this project.
+
 # Cloudfound
-[Cloudfound](https://cloudfound.io) aims to support open-source and decentralized initiatives by crowdfunding and maintaining cloud resources and deployments using Stripe, Kubernetes, and Github.
-The app itself functions as a (self-referential) proof of concept since its cluster, deployment, and fundings are all managed by its own code.
-Ideal candidates would be services or micro-services which can be used by many people and would benefit from decentralized funding and deployment versioning.
+[Cloudfound](https://cloudfound.io) aims to support open-source and decentralized initiatives by crowdfunding and maintaining cloud resources and deployments. It does this using Stripe (to process funds), Kubernetes (to manage clusters and deployments), and the Github API (for deployment and configuration versioning).
+The app is essentially a management system and serves as a proof of concept since its cluster, deployment, and fundings are all managed by its own code.
 
 Examples of use cases:
-- A web app created by a not-for-profit organization
-- A database containing scientific or medical information
+- A web app created by a not-for-profit organization 
+- A database containing scientific or medical information which can be shared among many researchers
 - A micro-service used by the public created by an online community
 - A server running any docker image
 
-# Overview
+An ideal scenerio would be one where a large corporation funds an open-source public micro-service which can be used by many people. 
+
+# Detailed Overview
 [See here](app/backend/README.md)
 
 # Roadmap
-- [ ] Create deployment from template UI
+- [ ] Create deployment from templates using UI
 - [ ] Support persistent disks
 - [ ] Support preemptible machines
 - [ ] Support Kubeless functions for serverless functions
