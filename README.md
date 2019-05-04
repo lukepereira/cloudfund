@@ -1,4 +1,4 @@
-Disclaimer: I recently removed the cluster hosting this app because it recieved very little attention. Please contact me if you are interested in contributing or maintaining this project.
+Disclaimer: I recently removed the cluster hosting this app ~~because my gcp credits ran out~~. Please contact me if you are interested in contributing to or maintaining this project.
 
 # Cloudfound
 [Cloudfound](https://cloudfound.io) aims to support open-source and decentralized initiatives by crowdfunding and maintaining cloud resources and deployments. It does this using Stripe (to process funds), Kubernetes (to manage clusters and deployments), and the Github API (for deployment and configuration versioning).
