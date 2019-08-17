@@ -6,7 +6,7 @@ The app is essentially a management system and serves as a proof of concept sinc
 
 Examples of use cases:
 - A web app created by a not-for-profit organization 
-- A database containing scientific or medical information which can be shared among many researchers
+- A database and API which can be shared among many researchers
 - A micro-service used by the public created by an online community
 - A server running any docker image
 
