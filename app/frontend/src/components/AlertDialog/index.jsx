@@ -25,18 +25,18 @@ class AlertDialog extends React.Component {
           </DialogContent>
 
           <DialogActions>
-              {
-                  this.props.onDisagree &&
-                  <Button onClick={this.props.onDisagree} color="primary">
-                      {this.props.onDisagreeText || 'Disagree'}
-                  </Button>
-              }
-              {
-                  this.props.onAgree &&
-                  <Button onClick={this.props.onAgree} color="primary" autoFocus>
-                      {this.props.onAgreeText || 'Agree'}
-                  </Button>
-              }
+            {
+              this.props.onDisagree &&
+              <Button onClick={this.props.onDisagree} color="primary">
+                {this.props.onDisagreeText || 'Disagree'}
+              </Button>
+            }
+            {
+              false && this.props.onAgree &&
+              <Button onClick={this.props.onAgree} color="primary" autoFocus>
+                {this.props.onAgreeText || 'Agree'}
+              </Button>
+            }
           </DialogActions>
         </Dialog>
       </div>

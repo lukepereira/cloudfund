@@ -14,7 +14,7 @@ import AlertDialog from '../components/AlertDialog'
 import './Payments.css'
 
 
-class _CardForm extends React.Component<InjectedProps & {fontSize: string, project: object}> {
+class _CardForm extends React.Component<InjectedProps & { fontSize: string, project: object }> {
 
     constructor(props) {
         super(props)
@@ -26,7 +26,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
         }
     }
 
-    handleAmountChange = (event) => this.setState({amount: event.target.value})
+    handleAmountChange = (event) => this.setState({ amount: event.target.value })
 
     createCharge = (stripeToken) => {
         if (!this.props.project) {
@@ -47,11 +47,11 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
         if (this.state.amount < 1) {
             return
         }
-        this.setState({alertDialogIsOpen: false})
+        this.setState({ alertDialogIsOpen: false })
         if (this.props.stripe) {
             this.props.stripe
-            .createToken()
-            .then((payload) => this.createCharge(payload))
+                .createToken()
+                .then((payload) => this.createCharge(payload))
         } else {
             console.log("Stripe.js hasn't loaded yet.")
         }
@@ -95,7 +95,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
         }
     }
 
-    handleInputChange = (targetName, targetValue) => this.setState({[targetName]: targetValue})
+    handleInputChange = (targetName, targetValue) => this.setState({ [targetName]: targetValue })
 
     applyStripeProcessingFee = (amount) => (amount + 0.3) / (1 - 0.029)
 
@@ -116,7 +116,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                         type={'number'}
                         value={amount}
                         onChange={(event) => this.handleInputChange(event.target.name, event.target.value)}
-                        inputProps={{min: 0}}
+                        inputProps={{ min: 0 }}
                     />
                 </div>
                 <div className={'flexFieldColumn'} >
@@ -146,7 +146,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
 
     openAlert = () => {
         if (this.state.amount > 0) {
-            this.setState({alertDialogIsOpen: true})
+            this.setState({ alertDialogIsOpen: true })
         }
     }
 
@@ -169,15 +169,15 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
                 <AlertDialog
                     title={'Are you sure?'}
                     message={[
-                        'Cloudfound is still in its beta version and things may break or drasitcally change during development.',
+                        'cloudfund is still in its beta version and things may break or drasitcally change during development.',
                         ' There is no guarantee your deployment will work as expected.',
                         ' If you encounter any issues, please open an ',
-                        <a target="_blank" href='https://github.com/lukepereira/cloudfound/issues'>issue</a>,
+                        <a target="_blank" href='https://github.com/lukepereira/cloudfund/issues'>issue</a>,
                         ' on Github or help contribute a fix.'
                     ]}
                     open={this.state.alertDialogIsOpen}
                     onAgree={this.handleSubmit}
-                    onDisagree={() => this.setState({alertDialogIsOpen: false})}
+                    onDisagree={() => this.setState({ alertDialogIsOpen: false })}
                 />
             </div>
         )
@@ -185,7 +185,7 @@ class _CardForm extends React.Component<InjectedProps & {fontSize: string, proje
 }
 const CardForm = injectStripe(_CardForm)
 
-class Payments extends React.Component<{}, {elementFontSize: string}> {
+class Payments extends React.Component<{}, { elementFontSize: string }> {
     constructor() {
         super()
         this.state = {
@@ -193,12 +193,12 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
         }
         window.addEventListener('resize', () => {
             if (window.innerWidth < 450 && this.state.elementFontSize !== '14px') {
-                this.setState({elementFontSize: '14px'})
+                this.setState({ elementFontSize: '14px' })
             } else if (
                 window.innerWidth >= 450 &&
                 this.state.elementFontSize !== '18px'
             ) {
-                this.setState({elementFontSize: '18px'})
+                this.setState({ elementFontSize: '18px' })
             }
         })
     }
@@ -220,7 +220,7 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
 
 
     render() {
-        const {elementFontSize} = this.state
+        const { elementFontSize } = this.state
         return (
             <div className="Payments">
                 <h1>Payments</h1>
@@ -237,7 +237,7 @@ class Payments extends React.Component<{}, {elementFontSize: string}> {
     }
 }
 
-const mapStateToProps = state => ({ })
+const mapStateToProps = state => ({})
 
 const mapDispatchToProps = dispatch => ({
     createProjectCharge: (postBody) => dispatch(createProjectCharge(postBody)),

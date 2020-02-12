@@ -28,7 +28,7 @@ class CreateProject extends React.Component {
             this.props.formState.location !== nextProps.formState.location
             || this.props.formState.machineType !== nextProps.formState.machineType
             || this.props.formState.initialNodeCount !== nextProps.formState.initialNodeCount
-        ){
+        ) {
             this.getPredictedCostFromTemplate(nextProps)
         }
 
@@ -57,7 +57,7 @@ class CreateProject extends React.Component {
     }
 
     getCluster = () => {
-        if (this.props.formState.formType === CLUSTER_FORMS.JSON_FORM){
+        if (this.props.formState.formType === CLUSTER_FORMS.JSON_FORM) {
             return {
                 format: 'json',
                 content: this.props.formState.JSONClusterFile,
@@ -101,7 +101,7 @@ class CreateProject extends React.Component {
             this.props.formState.locationType === CLUSTER_LOCATION_TYPES.ZONAL
             && this.props.formState.machineType === 'f1-micro'
             && this.props.formState.initialNodeCount < 3
-        ){
+        ) {
             return false
         }
 
@@ -110,7 +110,7 @@ class CreateProject extends React.Component {
 
 
     handleSubmit = () => {
-        if (!this.validateSubmit()){
+        if (!this.validateSubmit()) {
             return
         }
         const postContent = {
@@ -128,14 +128,14 @@ class CreateProject extends React.Component {
     }
 
     openAlert = () => {
-        if (!this.validateSubmit()){
+        if (!this.validateSubmit()) {
             return
         }
 
-        this.setState({alertDialogIsOpen: true})
+        this.setState({ alertDialogIsOpen: true })
     }
 
-    closeAlert = () => this.setState({alertDialogIsOpen: false})
+    closeAlert = () => this.setState({ alertDialogIsOpen: false })
 
 
     getPredictedCostFromTemplate = (props) => {
@@ -143,19 +143,19 @@ class CreateProject extends React.Component {
             !props.formState.location
             || !props.formState.machineType
             || !props.formState.initialNodeCount
-        ){
+        ) {
             return
         }
 
         const clusterJSON = {
             cluster: {
                 location: props.formState.location,
-                nodePools: [ {
+                nodePools: [{
                     initialNodeCount: parseInt(props.formState.initialNodeCount, 10),
                     config: {
                         'machineType': props.formState.machineType,
                     },
-                } ],
+                }],
             },
         }
         this.props.getPredictedCost(JSON.stringify(clusterJSON))
@@ -164,7 +164,7 @@ class CreateProject extends React.Component {
     getPredictedCostSection = () => {
         const monthlyCost = this.props.predictedCost ? formatDollar(this.props.predictedCost.monthly_cost) : 0
         const hourlyCost = this.props.predictedCost ? formatDollar(this.props.predictedCost.hourly_cost) : 0
-        return(
+        return (
             <div className={'costContainer'}>
                 <div>
                     {`Monthly Cost: ${monthlyCost}`}
@@ -184,7 +184,7 @@ class CreateProject extends React.Component {
                     inputLabel={'Region'}
                     options={REGIONS}
                     value={this.props.formState.location}
-                    onChange={(event) => {this.handleFormUpdate(event.target.name, event.target.value)} }
+                    onChange={(event) => { this.handleFormUpdate(event.target.name, event.target.value) }}
                 />
             )
         }
@@ -194,7 +194,7 @@ class CreateProject extends React.Component {
                 inputLabel={'Zone'}
                 options={ZONES}
                 value={this.props.formState.location}
-                onChange={(event) => {this.handleFormUpdate(event.target.name, event.target.value)} }
+                onChange={(event) => { this.handleFormUpdate(event.target.name, event.target.value) }}
             />
         )
     }
@@ -213,11 +213,11 @@ class CreateProject extends React.Component {
                             type={'number'}
                             value={this.props.formState.initialNodeCount}
                             onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
-                            inputProps={{min: 0, max: 15}}
+                            inputProps={{ min: 0, max: 15 }}
                         />
                     </div>
-                    <div className={'flexFieldColumn'} style={{textAlign: 'center'}}>
-                        { `Total (in all zones): ${totalNodeCount || 0}`}
+                    <div className={'flexFieldColumn'} style={{ textAlign: 'center' }}>
+                        {`Total (in all zones): ${totalNodeCount || 0}`}
                     </div>
                 </div>
             )
@@ -237,7 +237,7 @@ class CreateProject extends React.Component {
                     helperText={helperText}
                     value={this.props.formState.initialNodeCount}
                     onChange={(event) => this.handleFormUpdate(event.target.name, event.target.value)}
-                    inputProps={{min: 0, max: 15}}
+                    inputProps={{ min: 0, max: 15 }}
                 />
             )
         }
@@ -253,15 +253,15 @@ class CreateProject extends React.Component {
                     ]}
                     placeholder={'Location type is permanent'}
                     value={this.props.formState.formType}
-                    onChange={(selectedOption) => this.handleFormUpdate('locationType', selectedOption) }
+                    onChange={(selectedOption) => this.handleFormUpdate('locationType', selectedOption)}
                 />
             </div>
             <div className={'fieldRow'}>
-                { this.getLocationField() }
+                {this.getLocationField()}
             </div>
 
             <div className={'fieldRow'}>
-                { this.getNodeCountField() }
+                {this.getNodeCountField()}
             </div>
 
             <div className={'fieldRow'}>
@@ -299,7 +299,7 @@ class CreateProject extends React.Component {
                 <div className="container">
                     <h1>Create</h1>
 
-                    { this.getPredictedCostSection() }
+                    {this.getPredictedCostSection()}
 
                     <div className={'fieldRow'}>
                         <TextField
@@ -350,10 +350,10 @@ class CreateProject extends React.Component {
                         <AlertDialog
                             title={'Are you sure?'}
                             message={[
-                                'Cloudfound is still in its beta version and things may break or drasitcally change during development.',
+                                'Cloudfund is still in its beta version and things may break or drasitcally change during development.',
                                 ' There is no guarantee your deployment will work as expected.',
                                 ' If you encounter any issues, please open an ',
-                                <a target="_blank" href='https://github.com/lukepereira/cloudfound/issues'>issue</a>,
+                                <a target="_blank" href='https://github.com/lukepereira/cloudfund/issues'>issue</a>,
                                 ' on Github or help contribute a fix.'
                             ]}
                             open={this.state.alertDialogIsOpen}

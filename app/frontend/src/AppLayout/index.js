@@ -19,9 +19,9 @@ const drawerWidth = 240
 
 class AppLayout extends React.Component {
 	state = {
-    	anchor: 'left',
+		anchor: 'left',
 	}
-	
+
 	componentDidMount = () => {
 		this.props.getProjects()
 	}
@@ -35,14 +35,14 @@ class AppLayout extends React.Component {
 	}
 
 	handleChangeAnchor = event => {
-    	this.setState({
-    		anchor: event.target.value,
-    	})
+		this.setState({
+			anchor: event.target.value,
+		})
 	}
-	
+
 	getHeaderStyle = () => {
 		const path = window.location.pathname
-		if (path.indexOf('project') !== -1 || path.indexOf('create') !== -1 ) {
+		if (path.indexOf('project') !== -1 || path.indexOf('create') !== -1) {
 			return {
 				backgroundImage: 'linear-gradient(to right, #434863, #004d7a, #0089a5, #00c6a8, #87ff59)'
 			}
@@ -51,82 +51,82 @@ class AppLayout extends React.Component {
 			backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
 		}
 	}
-	
+
 	render() {
-    	const { classes, theme, isSideMenuOpen } = this.props
-    	const { anchor } = this.state
-    	const drawer = (
-    		<Drawer
-	    		variant="persistent"
-	    		anchor={anchor}
-	    		open={isSideMenuOpen}
-	    		classes={{
-	    			paper: classes.drawerPaper,
-	    		}}
-    		>
-    		<div className={classes.drawerHeader}>
-    			<IconButton onClick={this.handleDrawerClose}>
-    			{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-    			</IconButton>
-    		</div>
-    		{ this.props.menuContent }
-    		</Drawer>
-    	)
+		const { classes, theme, isSideMenuOpen } = this.props
+		const { anchor } = this.state
+		const drawer = (
+			<Drawer
+				variant="persistent"
+				anchor={anchor}
+				open={isSideMenuOpen}
+				classes={{
+					paper: classes.drawerPaper,
+				}}
+			>
+				<div className={classes.drawerHeader}>
+					<IconButton onClick={this.handleDrawerClose}>
+						{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+					</IconButton>
+				</div>
+				{this.props.menuContent}
+			</Drawer>
+		)
 
-    	let before = null
-    	let after = null
+		let before = null
+		let after = null
 
-    	if (anchor === 'left') {
-    		before = drawer
-    	} else {
-    		after = drawer
-    	}
+		if (anchor === 'left') {
+			before = drawer
+		} else {
+			after = drawer
+		}
 
-    	return (
-    		<div className={classes.root}>
-	    		<div className={classes.appFrame}>
-	    			<AppBar
+		return (
+			<div className={classes.root}>
+				<div className={classes.appFrame}>
+					<AppBar
 						style={this.getHeaderStyle()}
-		    			className={classNames(classes.appBar, {
-		    				[classes.appBarShift]: isSideMenuOpen,
-		    				[classes[`appBarShift-${anchor}`]]: isSideMenuOpen,
-		    			})}
-	    			>
-	    			<Toolbar disableGutters={!isSideMenuOpen}>
-	    				<IconButton
-		    				color="inherit"
-		    				aria-label="Open drawer"
-		    				onClick={this.handleDrawerOpen}
-		    				className={classNames(classes.menuButton, isSideMenuOpen && classes.hide)}
-	    				>
-	    				<MenuIcon />
-	    				</IconButton>
-	    				<Typography 
-							className={classes.headerTitle}
-							variant="title"
-							color="inherit" 
-							noWrap
-						>
-	    					Cloudfound
+						className={classNames(classes.appBar, {
+							[classes.appBarShift]: isSideMenuOpen,
+							[classes[`appBarShift-${anchor}`]]: isSideMenuOpen,
+						})}
+					>
+						<Toolbar disableGutters={!isSideMenuOpen}>
+							<IconButton
+								color="inherit"
+								aria-label="Open drawer"
+								onClick={this.handleDrawerOpen}
+								className={classNames(classes.menuButton, isSideMenuOpen && classes.hide)}
+							>
+								<MenuIcon />
+							</IconButton>
+							<Typography
+								className={classes.headerTitle}
+								variant="title"
+								color="inherit"
+								noWrap
+							>
+								Cloudfund
 	    				</Typography>
-	    			</Toolbar>
-	    			</AppBar>
-	    			{before}
-	    			<main
-		    			className={classNames(classes.content, classes[`content-${anchor}`], {
-		    				[classes.contentShift]: isSideMenuOpen,
-		    				[classes[`contentShift-${anchor}`]]: isSideMenuOpen,
-		    			})}
-	    			>
-		    			<div className={classes.drawerHeader} />
+						</Toolbar>
+					</AppBar>
+					{before}
+					<main
+						className={classNames(classes.content, classes[`content-${anchor}`], {
+							[classes.contentShift]: isSideMenuOpen,
+							[classes[`contentShift-${anchor}`]]: isSideMenuOpen,
+						})}
+					>
+						<div className={classes.drawerHeader} />
 						<div className={classes.bodyContent}>
-							{ this.props.bodyContent }
+							{this.props.bodyContent}
 						</div>
-	    			</main>
-	    			{after}
-	    		</div>
-    		</div>
-    	)
+					</main>
+					{after}
+				</div>
+			</div>
+		)
 	}
 }
 
@@ -136,92 +136,92 @@ const styles = theme => ({
 		flexGrow: 1,
 	},
 	appFrame: {
-    	height: '100%	',
-    	zIndex: 1,
-    	overflow: 'auto',
-    	position: 'relative',
-    	display: 'flex',
-    	width: '100%',
+		height: '100%	',
+		zIndex: 1,
+		overflow: 'auto',
+		position: 'relative',
+		display: 'flex',
+		width: '100%',
 	},
 	appBar: {
-    	position: 'fixed',
-    	transition: theme.transitions.create(['margin', 'width'], {
-    		easing: theme.transitions.easing.sharp,
-    		duration: theme.transitions.duration.leavingScreen,
-    	}),
+		position: 'fixed',
+		transition: theme.transitions.create(['margin', 'width'], {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
 		// backgroundColor: '#1a73e8', //'#000000fc',
-	    
+
 		// backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #66ff88)', // brighter right
 		// backgroundImage: 'linear-gradient(to right, #051937, #004d7a, #0089a5, #00c6a8, #87ff59)', // default
 		backgroundImage: 'linear-gradient(to right, #434863, #004d7a, #0089a5, #00c6a8, #87ff59)', // brighter left
-	    backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
+		backgroundImage: 'linear-gradient(to right, #051937, #434863, #7e7f92, #bbbac5, #fafafa)',
 	},
 	appBarShift: {
-    	width: `calc(100% - ${drawerWidth}px)`,
-    	transition: theme.transitions.create(['margin', 'width'], {
-    		easing: theme.transitions.easing.easeOut,
-    		duration: theme.transitions.duration.enteringScreen,
-    	}),
+		width: `calc(100% - ${drawerWidth}px)`,
+		transition: theme.transitions.create(['margin', 'width'], {
+			easing: theme.transitions.easing.easeOut,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
 	},
 	'appBarShift-left': {
-        marginLeft: drawerWidth,
+		marginLeft: drawerWidth,
 	},
 	'appBarShift-right': {
-        marginRight: drawerWidth,
+		marginRight: drawerWidth,
 	},
 	menuButton: {
-    	marginLeft: 12,
-    	marginRight: 20,
+		marginLeft: 12,
+		marginRight: 20,
 	},
 	headerTitle: {
 		fontWeight: 300,
 		letterSpacing: '8px',
 	},
- 	hide: {
-    	display: 'none',
+	hide: {
+		display: 'none',
 	},
 	drawerPaper: {
-    	position: 'fixed',
+		position: 'fixed',
 		height: '100vh',
-    	width: drawerWidth,
+		width: drawerWidth,
 		border: 'none',
 		boxShadow: '8px 5px 23px -8px rgba(0,0,0,0.07)',
 	},
 	drawerHeader: {
-    	display: 'flex',
-    	alignItems: 'center',
-    	justifyContent: 'flex-end',
-    	// padding: '0 8px',
-    	...theme.mixins.toolbar,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		// padding: '0 8px',
+		...theme.mixins.toolbar,
 	},
 	content: {
-    	flexGrow: 1,
-    	// backgroundColor: theme.palette.background.default,
-		
-    	padding: 0, //theme.spacing.unit * 3,
-    	transition: theme.transitions.create('margin', {
-    		easing: theme.transitions.easing.sharp,
-    		duration: theme.transitions.duration.leavingScreen,
-    	}),
+		flexGrow: 1,
+		// backgroundColor: theme.palette.background.default,
+
+		padding: 0, //theme.spacing.unit * 3,
+		transition: theme.transitions.create('margin', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
 	},
 
 	'content-left': {
-        // marginLeft: -drawerWidth,
+		// marginLeft: -drawerWidth,
 	},
 	'content-right': {
-        marginRight: -drawerWidth,
+		marginRight: -drawerWidth,
 	},
 	contentShift: {
-    	transition: theme.transitions.create('margin', {
-    		easing: theme.transitions.easing.easeOut,
-    		duration: theme.transitions.duration.enteringScreen,
-    	}),
+		transition: theme.transitions.create('margin', {
+			easing: theme.transitions.easing.easeOut,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
 	},
 	'contentShift-left': {
-        marginLeft: drawerWidth,
+		marginLeft: drawerWidth,
 	},
 	'contentShift-right': {
-        marginRight: 0,
+		marginRight: 0,
 	},
 })
 
