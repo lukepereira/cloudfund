@@ -8,7 +8,7 @@ class Deployment extends React.Component {
         if (!this.props.project) {
             return
         }
-        const baseSourceUrl = 'https://github.com/lukepereira/cloudfound'
+        const baseSourceUrl = 'https://github.com/lukepereira/cloudfund'
         const baseGistURL = 'https://gist-it.appspot.com/github.com/lukepereira/cloudfund'
 
         const gistURL = `${baseGistURL}/blob/${this.props.project.sha}/clusters/${this.props.project.project_id}.json?footer=no&slice=`
